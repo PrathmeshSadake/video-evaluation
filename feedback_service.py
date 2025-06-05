@@ -103,7 +103,7 @@ class FeedbackService:
                         "Ensure key points are well-structured"
                     ],
                     "quality_score": 0.5,
-                    "word_count": word_count,
+                    "word_count": "1000",
                     "content_analysis": {
                         "clarity": "high/medium/low",
                         "engagement": "high/medium/low",
@@ -118,7 +118,7 @@ class FeedbackService:
                     },
                     "actionable_insights": [
                         "Basic transcription completed successfully",
-                        f"Content contains {word_count} words"
+                        "Content contains word count details"
                     ],
                     "questions": [
                         {
@@ -185,6 +185,9 @@ class FeedbackService:
                 ("user", "Here's the transcription to analyze:\n{transcription}")
             ])
 
+            # Calculate word count for the example
+            word_count = len(transcription_text.split())
+
             # Format the prompt with our schema, example, and transcription
             formatted_prompt = prompt.format_messages(
                 schema=json.dumps(schema, indent=2),
@@ -230,7 +233,7 @@ class FeedbackService:
                 "Ensure key points are well-structured"
             ],
             "quality_score": 0.5,
-            "word_count": word_count,
+            "word_count": "integer",
             "content_analysis": {
                 "clarity": "medium",
                 "engagement": "medium",
@@ -245,7 +248,7 @@ class FeedbackService:
             },
             "actionable_insights": [
                 "Basic transcription completed successfully",
-                f"Content contains {word_count} words"
+                "Content contains word count details"
             ],
             "questions": [
                 {
