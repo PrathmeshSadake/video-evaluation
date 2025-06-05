@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+yt-dlp
+python-dotenv
+requests
+pydantic
+transformers
+torch
+torchaudio
+librosa
+soundfile
+accelerate
