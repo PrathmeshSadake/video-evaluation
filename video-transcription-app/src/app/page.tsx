@@ -5,9 +5,9 @@ import { Upload, Send, FileVideo, Loader2, Clipboard, BarChart3, Brain, User, Li
 import dynamic from 'next/dynamic';
 
 // Dynamically load the Chart.js components to avoid SSR issues
-const Chart = dynamic(() => import('react-chartjs-2').then(mod => ({
-  default: mod.Chart
-})), { ssr: false });
+// const Chart = dynamic(() => import('react-chartjs-2').then(mod => ({
+//   default: mod.Chart
+// })), { ssr: false });
 
 // Dynamically load specific chart types
 const Bar = dynamic(() => import('react-chartjs-2').then(mod => ({ default: mod.Bar })), { ssr: false });
@@ -42,6 +42,21 @@ ChartJS.register(
   LineElement,
   ArcElement
 );
+
+interface TechnicalSkill {
+  strength: string;
+  issues: string[];
+  code_accuracy: number;
+  problem_solving: number;
+  understanding_of_concepts: number;
+}
+
+interface TechnicalSkills {
+  skills: Array<Record<string, TechnicalSkill>>;
+  overall_tech_review: string;
+  depth_in_core_topics: number;
+  breadth_of_tech_stack: number;
+}
 
 interface TranscriptionResponse {
   transcription: Array<{
@@ -86,20 +101,7 @@ interface TranscriptionResponse {
       language_fluency: number;
       technical_articulation: number;
     };
-    technical_skills: {
-      skills: Array<{
-        [skill_name: string]: {
-          strength: string;
-          issues: string[];
-          code_accuracy: number;
-          problem_solving: number;
-          understanding_of_concepts: number;
-        }
-      }>;
-      overall_tech_review: string;
-      depth_in_core_topics: number;
-      breadth_of_tech_stack: number;
-    };
+    technical_skills: TechnicalSkills;
     interviewer_notes: string;
     confidence_level: number;
     culture_fit: number;
@@ -190,13 +192,13 @@ export default function Home() {
   };
 
   // Helper function to get technical skills (excluding metadata fields)
-  const getTechnicalSkills = (technicalSkills: any) => {
+  const getTechnicalSkills = (technicalSkills: TechnicalSkills): Array<[string, TechnicalSkill]> => {
     if (!technicalSkills.skills || !Array.isArray(technicalSkills.skills)) {
       return [];
     }
     
     // Process the skills array
-    return technicalSkills.skills.flatMap((skillObj: Record<string, any>) => {
+    return technicalSkills.skills.flatMap((skillObj: Record<string, TechnicalSkill>) => {
       return Object.entries(skillObj);
     });
   };
@@ -439,7 +441,7 @@ export default function Home() {
                 </h3>
                 {transcriptionResult.feedback.final_assessment && (
                   <p className="text-slate-700 text-lg italic bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8">
-                    "{transcriptionResult.feedback.final_assessment}"
+                    &quot;{transcriptionResult.feedback.final_assessment}&quot;
                   </p>
                 )}
                 
@@ -743,16 +745,10 @@ export default function Home() {
                   </div>
                   
                   <div className="space-y-6">
-                    {getTechnicalSkills(transcriptionResult?.feedback?.technical_skills || {}).length > 0 ? (
-                      getTechnicalSkills(transcriptionResult.feedback.technical_skills).map(([skillName, skillData]: [string, any]) => {
+                    {getTechnicalSkills(transcriptionResult?.feedback?.technical_skills || {} as TechnicalSkills).length > 0 ? (
+                      getTechnicalSkills(transcriptionResult.feedback.technical_skills).map(([skillName, skillData]: [string, TechnicalSkill]) => {
                         if (typeof skillData === 'object' && skillData !== null) {
-                          const typedSkillData = skillData as {
-                            strength: string;
-                            issues: string[];
-                            code_accuracy: number;
-                            problem_solving: number;
-                            understanding_of_concepts: number;
-                          };
+                          const typedSkillData = skillData;
                           
                           return (
                             <div key={skillName} className="bg-slate-50 rounded-xl p-6 border border-slate-100">
