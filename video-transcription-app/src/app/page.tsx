@@ -72,6 +72,12 @@ interface TranscriptionResponse {
       technical_terms: string[];
     };
     actionable_insights: string[];
+    questions: Array<{
+      question: string;
+      answer: string;
+      rating: number;
+      feedback: string;
+    }>;
     // New fields
     communication_skills: {
       summary: string;
@@ -81,13 +87,15 @@ interface TranscriptionResponse {
       technical_articulation: number;
     };
     technical_skills: {
-      [skill_name: string]: {
-        strength: string;
-        issues: string[];
-        code_accuracy: number;
-        problem_solving: number;
-        understanding_of_concepts: number;
-      } | string | number;
+      skills: Array<{
+        [skill_name: string]: {
+          strength: string;
+          issues: string[];
+          code_accuracy: number;
+          problem_solving: number;
+          understanding_of_concepts: number;
+        }
+      }>;
       overall_tech_review: string;
       depth_in_core_topics: number;
       breadth_of_tech_stack: number;
@@ -183,9 +191,14 @@ export default function Home() {
 
   // Helper function to get technical skills (excluding metadata fields)
   const getTechnicalSkills = (technicalSkills: any) => {
-    return Object.entries(technicalSkills).filter(
-      ([key]) => !['overall_tech_review', 'depth_in_core_topics', 'breadth_of_tech_stack'].includes(key)
-    );
+    if (!technicalSkills.skills || !Array.isArray(technicalSkills.skills)) {
+      return [];
+    }
+    
+    // Process the skills array
+    return technicalSkills.skills.flatMap((skillObj: Record<string, any>) => {
+      return Object.entries(skillObj);
+    });
   };
   
   // Function to convert string ratings to numeric values for charts
@@ -364,38 +377,50 @@ export default function Home() {
                 <div>
                   <h4 className="font-semibold text-slate-800 mb-4 text-lg">Key Topics</h4>
                   <div className="flex flex-wrap gap-3">
-                    {transcriptionResult.feedback.key_topics.map((topic, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-100"
-                      >
-                        {topic}
-                      </span>
-                    ))}
+                    {transcriptionResult.feedback.key_topics && transcriptionResult.feedback.key_topics.length > 0 ? (
+                      transcriptionResult.feedback.key_topics.map((topic, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-100"
+                        >
+                          {topic}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-slate-600">No key topics identified</span>
+                    )}
                   </div>
                 </div>
 
                 <div className="bg-slate-50 rounded-xl p-6">
                   <h4 className="font-semibold text-slate-800 mb-4 text-lg">Recommendations</h4>
                   <ul className="space-y-3">
-                    {transcriptionResult.feedback.recommendations.map((rec, index) => (
-                      <li key={index} className="flex items-start text-slate-700">
-                        <span className="mr-3 text-blue-500">•</span>
-                        <span>{rec}</span>
-                      </li>
-                    ))}
+                    {transcriptionResult.feedback.recommendations && transcriptionResult.feedback.recommendations.length > 0 ? (
+                      transcriptionResult.feedback.recommendations.map((rec, index) => (
+                        <li key={index} className="flex items-start text-slate-700">
+                          <span className="mr-3 text-blue-500">•</span>
+                          <span>{rec}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-slate-600">No recommendations available</li>
+                    )}
                   </ul>
                 </div>
 
                 <div className="bg-slate-50 rounded-xl p-6">
                   <h4 className="font-semibold text-slate-800 mb-4 text-lg">Actionable Insights</h4>
                   <ul className="space-y-3">
-                    {transcriptionResult.feedback.actionable_insights.map((insight, index) => (
-                      <li key={index} className="flex items-start text-slate-700">
-                        <span className="mr-3 text-indigo-500">•</span>
-                        <span>{insight}</span>
-                      </li>
-                    ))}
+                    {transcriptionResult.feedback.actionable_insights && transcriptionResult.feedback.actionable_insights.length > 0 ? (
+                      transcriptionResult.feedback.actionable_insights.map((insight, index) => (
+                        <li key={index} className="flex items-start text-slate-700">
+                          <span className="mr-3 text-indigo-500">•</span>
+                          <span>{insight}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-slate-600">No actionable insights available</li>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -584,6 +609,64 @@ export default function Home() {
               </div>
             )}
 
+            {/* Interview Questions Analysis */}
+            {transcriptionResult?.feedback?.questions && transcriptionResult.feedback.questions.length > 0 && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-100">
+                <h3 className="text-2xl font-semibold mb-8 text-slate-800 flex items-center">
+                  <Clipboard className="mr-3 text-emerald-500" />
+                  Interview Questions Analysis
+                </h3>
+                
+                <div className="space-y-6">
+                  {transcriptionResult.feedback.questions.map((questionItem, index) => (
+                    <div key={index} className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-slate-800 text-lg">Question {index + 1}</h4>
+                        <p className="text-slate-700 bg-white p-4 rounded-lg border border-slate-200 mt-2 font-medium">
+                          {questionItem.question}
+                        </p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h5 className="font-medium text-slate-700">Answer</h5>
+                        <p className="text-slate-600 bg-white p-4 rounded-lg border border-slate-200 mt-2 italic">
+                          {questionItem.answer}
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-2">Rating</h5>
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <div 
+                                key={i} 
+                                className={`w-5 h-5 rounded-full mr-1 ${
+                                  i < questionItem.rating
+                                    ? 'bg-emerald-500' 
+                                    : 'bg-slate-200'
+                                }`}
+                              />
+                            ))}
+                            <span className="ml-2 font-semibold text-emerald-700">
+                              {questionItem.rating}/5
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h5 className="font-medium text-slate-700 mb-2">Feedback</h5>
+                          <p className="text-slate-600 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                            {questionItem.feedback}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Technical Skills Analysis */}
             {transcriptionResult?.feedback?.technical_skills && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-100">
@@ -661,7 +744,7 @@ export default function Home() {
                   
                   <div className="space-y-6">
                     {getTechnicalSkills(transcriptionResult?.feedback?.technical_skills || {}).length > 0 ? (
-                      getTechnicalSkills(transcriptionResult.feedback.technical_skills).map(([skillName, skillData]) => {
+                      getTechnicalSkills(transcriptionResult.feedback.technical_skills).map(([skillName, skillData]: [string, any]) => {
                         if (typeof skillData === 'object' && skillData !== null) {
                           const typedSkillData = skillData as {
                             strength: string;
@@ -746,7 +829,7 @@ export default function Home() {
                   <div>
                     <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
                       <div className="grid grid-cols-2 gap-6 mb-6">
-                        {Object.entries(transcriptionResult.feedback.content_analysis || {}).map(([key, value]) => (
+                        {Object.entries(transcriptionResult?.feedback?.content_analysis || {}).map(([key, value]) => (
                           <div key={key} className="text-center bg-white rounded-lg p-4 shadow-sm">
                             <p className="text-sm text-slate-600 capitalize mb-2">
                               {key.replace("_", " ")}
@@ -761,12 +844,12 @@ export default function Home() {
                         {typeof window !== 'undefined' && Object.keys(transcriptionResult.feedback.content_analysis || {}).length > 0 && (
                           <Doughnut
                             data={{
-                              labels: Object.keys(transcriptionResult.feedback.content_analysis || {}).map(
+                              labels: Object.keys(transcriptionResult?.feedback?.content_analysis || {}).map(
                                 key => key.replace('_', ' ').charAt(0).toUpperCase() + key.replace('_', ' ').slice(1)
                               ),
                               datasets: [
                                 {
-                                  data: Object.values(transcriptionResult.feedback.content_analysis || {}).map(
+                                  data: Object.values(transcriptionResult?.feedback?.content_analysis || {}).map(
                                     value => getRatingValue(value as string)
                                   ),
                                   backgroundColor: [
@@ -837,7 +920,7 @@ export default function Home() {
                         <div className="mt-6">
                           <h5 className="font-semibold text-slate-800 mb-4">Technical Terms Used</h5>
                           <div className="flex flex-wrap gap-2">
-                            {transcriptionResult.feedback.speaking_patterns.technical_terms.map((term, index) => (
+                            {transcriptionResult?.feedback?.speaking_patterns?.technical_terms?.map((term, index) => (
                               <span
                                 key={index}
                                 className="bg-white text-slate-700 px-3 py-2 rounded-lg text-sm border border-slate-200 shadow-sm"
@@ -877,7 +960,7 @@ export default function Home() {
                   Timestamped Segments
                 </h3>
                 <div className="space-y-4 max-h-[32rem] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-slate-50">
-                  {transcriptionResult.transcription.map((segment, index) => (
+                  {transcriptionResult?.transcription?.map((segment, index) => (
                     <div
                       key={index}
                       className="border-l-4 border-indigo-400 pl-4 py-3 bg-white rounded-r-xl shadow-sm hover:shadow-md transition-shadow"
