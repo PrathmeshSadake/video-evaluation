@@ -82,6 +82,8 @@ async def transcribe_video(
         # Step 3: Generate feedback
         feedback = feedback_service.generate_feedback(full_text)
         logger.info("Feedback generated successfully")
+
+        print(feedback)
         
         # Schedule cleanup of audio file
         background_tasks.add_task(cleanup_audio_file, audio_path)
