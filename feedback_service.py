@@ -26,117 +26,112 @@ class FeedbackService:
             # Define the JSON schema and example for the prompt
             schema = {
                 "feedback": {
-                    "overall_sentiment": "positive/neutral/negative",
-                    "key_topics": ["general content"],
-                    "summary": "Content analysis completed. Detailed feedback unavailable due to processing limitations.",
+                    "overall_sentiment": "positive | neutral | negative",
+                    "key_topics": ["string - Key topics discussed in the interview"],
+                    "summary": "string - Concise summary of the interview",
                     "recommendations": [
-                        "Consider reviewing content for clarity",
-                        "Ensure key points are well-structured"
+                        "string - Actionable suggestions for improvement"
                     ],
-                    "quality_score": 0.5,
-                    "word_count": "integer",
+                    "quality_score": "integer (1-5) - Overall content quality rating ",
+                    "word_count": "integer - Total number of words in the transcript",
                     "content_analysis": {
-                        "clarity": "high/medium/low",
-                        "engagement": "high/medium/low",
-                        "information_density": "high/medium/low",
-                        "speaker_confidence": "high/medium/low"
+                        "clarity": "high | medium | low",
+                        "engagement": "high | medium | low",
+                        "information_density": "high | medium | low",
+                        "speaker_confidence": "high | medium | low"
                     },
                     "speaking_patterns": {
-                        "pace": "fast/medium/slow",
-                        "filler_words": 0,
-                        "repetitions": 0,
-                        "technical_terms": []
+                        "pace": "fast | medium | slow",
+                        "filler_words": "integer (1-5) - Frequency of filler word usage",
+                        "repetitions": "integer (1-5) - Frequency of repeated content",
+                        "technical_terms": ["string - Notable technical terms used"]
                     },
                     "actionable_insights": [
-                        "Basic transcription completed successfully",
-                        "Content contains word count details"
+                        "string - Observations with practical takeaways"
                     ],
                     "questions": [
                         {
-                            "question": "string - The interview question asked",
+                            "question": "string - Interview question",
                             "answer": "string - Candidate's response",
-                            "rating": "integer (1-5) - Quality of answer",
-                            "feedback": "string - Specific feedback on this answer"
+                            "rating": "integer (1-5) - Answer quality rating",
+                            "feedback": "string - Constructive feedback on the answer"
                         }
                     ],
                     "communication_skills": {
-                        "summary": "string - Brief evaluation of communication abilities",
-                        "impact": "string - How these skills affect collaboration",
-                        "rating": "integer (1-5) - Overall communication rating",
-                        "language_fluency": "integer (1-5) - Language proficiency",
-                        "technical_articulation": "integer (1-5) - Ability to explain technical concepts"
+                        "summary": "string - Overview of communication abilities",
+                        "impact": "string - Collaboration or team impact",
+                        "rating": "integer (1-5)",
+                        "language_fluency": "integer (1-5)",
+                        "technical_articulation": "integer (1-5)"
                     },
                     "technical_skills": {
                         "skills": [
                             {
-                                "backend_development": {
-                                    "strength": "Excellent understanding of API design and scalability",
-                                    "issues": [
-                                        "Could improve error handling patterns",
-                                        "Database optimization knowledge needs enhancement"
-                                    ],
-                                    "code_accuracy": 4,
-                                    "problem_solving": 5,
-                                    "understanding_of_concepts": 4
+                                "skill_name": {
+                                    "strength": "string - Core strengths",
+                                    "issues": ["string - Areas needing improvement"],
+                                    "code_accuracy": "integer (1-5)",
+                                    "problem_solving": "integer (1-5)",
+                                    "understanding_of_concepts": "integer (1-5)"
                                 }
                             }
                         ],
-                        "overall_tech_review": "Strong backend developer with good architecture skills",
-                        "depth_in_core_topics": 4,
-                        "breadth_of_tech_stack": 4
+                        "overall_tech_review": "string - Summary of technical performance",
+                        "depth_in_core_topics": "integer (1-5)",
+                        "breadth_of_tech_stack": "integer (1-5)"
                     },
-                    "interviewer_notes": "string - Key observations and recommendations",
-                    "confidence_level": "integer (1-5) - Overall confidence rating",
-                    "culture_fit": "integer (1-5) - Team/culture compatibility",
-                    "learning_aptitude": "integer (1-5) - Learning/adaptability rating",
-                    "final_assessment": "string - Final evaluation and recommendation"
+                    "interviewer_notes": "string - Observations and any final comments",
+                    "confidence_level": "integer (1-5)",
+                    "culture_fit": "integer (1-5)",
+                    "learning_aptitude": "integer (1-5)",
+                    "final_assessment": "string - Overall evaluation and recommendation"
                 }
             }
 
             example = {
                 "feedback": {
                     "overall_sentiment": "neutral",
-                    "key_topics": ["general content"],
-                    "summary": "Content analysis completed. Detailed feedback unavailable due to processing limitations.",
+                    "key_topics": ["Microservice design", "Database optimization"],
+                    "summary": "The candidate demonstrated a solid understanding of backend principles with room for growth in database tuning and system monitoring.",
                     "recommendations": [
-                        "Consider reviewing content for clarity",
-                        "Ensure key points are well-structured"
+                        "Consider reviewing content for clarity and conciseness",
+                        "Ensure technical points are supported with real-world examples"
                     ],
-                    "quality_score": 0.5,
-                    "word_count": "1000",
+                    "quality_score": 4,
+                    "word_count": 1000,
                     "content_analysis": {
-                        "clarity": "high/medium/low",
-                        "engagement": "high/medium/low",
-                        "information_density": "high/medium/low",
-                        "speaker_confidence": "high/medium/low"
+                        "clarity": "medium",
+                        "engagement": "medium",
+                        "information_density": "high",
+                        "speaker_confidence": "medium"
                     },
                     "speaking_patterns": {
-                        "pace": "fast/medium/slow",
-                        "filler_words": 0,
-                        "repetitions": 0,
-                        "technical_terms": []
+                        "pace": "medium",
+                        "filler_words": 1,
+                        "repetitions": 1,
+                        "technical_terms": ["microservices", "message queues", "Kubernetes", "sharding"]
                     },
                     "actionable_insights": [
                         "Basic transcription completed successfully",
-                        "Content contains word count details"
+                        "Word count and pacing fall within acceptable range"
                     ],
                     "questions": [
                         {
                             "question": "Can you explain how you would design a scalable microservice architecture?",
                             "answer": "I would start by identifying bounded contexts and designing services around business domains. For scalability, I'd implement asynchronous communication using message queues, ensure statelessness, and use container orchestration like Kubernetes.",
                             "rating": 4,
-                            "feedback": "Strong understanding of microservice principles and scalability concerns. Could have elaborated more on data consistency challenges."
+                            "feedback": "Strong understanding of microservice principles. Could further discuss consistency and monitoring strategies."
                         },
                         {
                             "question": "How would you handle database optimization for high-traffic applications?",
                             "answer": "I'd focus on indexing strategies, query optimization, and implementing caching layers. For write-heavy applications, I'd consider sharding and read replicas.",
                             "rating": 3,
-                            "feedback": "Good basic knowledge but lacks depth on specific optimization techniques and monitoring strategies."
+                            "feedback": "Good foundation but limited depth in advanced optimization and performance tuning."
                         }
                     ],
                     "communication_skills": {
-                        "summary": "Strong verbal communication with clear technical explanations",
-                        "impact": "Would effectively collaborate in team settings and mentor juniors",
+                        "summary": "Clear and structured communicator, especially on technical subjects",
+                        "impact": "Would contribute well to team discussions and mentorship",
                         "rating": 4,
                         "language_fluency": 5,
                         "technical_articulation": 4
@@ -145,10 +140,10 @@ class FeedbackService:
                         "skills": [
                             {
                                 "backend_development": {
-                                    "strength": "Excellent understanding of API design and scalability",
+                                    "strength": "Excellent grasp of API design and system architecture",
                                     "issues": [
-                                        "Could improve error handling patterns",
-                                        "Database optimization knowledge needs enhancement"
+                                        "Improve error-handling best practices",
+                                        "Needs more depth in database internals and optimization"
                                     ],
                                     "code_accuracy": 4,
                                     "problem_solving": 5,
@@ -156,15 +151,15 @@ class FeedbackService:
                                 }
                             }
                         ],
-                        "overall_tech_review": "Strong backend developer with good architecture skills",
+                        "overall_tech_review": "Solid backend expertise with room to grow in infrastructure-level concerns",
                         "depth_in_core_topics": 4,
                         "breadth_of_tech_stack": 4
                     },
-                    "interviewer_notes": "Strong candidate with leadership potential. Recommend for senior role.",
+                    "interviewer_notes": "Strong technical candidate with leadership potential. Ready for senior-level responsibilities.",
                     "confidence_level": 4,
                     "culture_fit": 5,
                     "learning_aptitude": 4,
-                    "final_assessment": "Highly recommended. Technical strength and communication skills align well with our needs."
+                    "final_assessment": "Highly recommended. Strong technical foundation and effective communication make this candidate a good fit for advanced roles."
                 }
             }
 

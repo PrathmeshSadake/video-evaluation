@@ -337,7 +337,7 @@ export default function Home() {
                     Quality Score
                   </p>
                   <p className="text-3xl font-bold text-blue-900">
-                    {Math.round(transcriptionResult.feedback.quality_score * 100)}%
+                    {Math.round(transcriptionResult.feedback.quality_score * 20)}%
                   </p>
                 </div>
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-6 rounded-xl border border-emerald-100">
