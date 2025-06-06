@@ -478,286 +478,9 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
           </View>
         )}
       </Page>
-
-      {/* Technical Skills Page */}
       <Page size="A4" style={styles.page}>
-        {/* Technical Skills Assessment */}
-        {feedback.technical_skills && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Technical Skills Assessment</Text>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Core Topics Depth:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{...styles.scoreBarFill, width: `${(feedback.technical_skills.depth_in_core_topics / 5) * 100}%`}} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.technical_skills.depth_in_core_topics}/5</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Tech Stack Breadth:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{...styles.scoreBarFill, width: `${(feedback.technical_skills.breadth_of_tech_stack / 5) * 100}%`}} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.technical_skills.breadth_of_tech_stack}/5</Text>
-            </View>
-            
-            <Text style={{...styles.text, marginTop: 10, marginBottom: 5, fontWeight: 'bold'}}>Overall Technical Review:</Text>
-            <Text style={styles.text}>{feedback.technical_skills.overall_tech_review}</Text>
-            
-            <View style={{marginTop: 15}}>
-              <Text style={{...styles.text, fontWeight: 'bold', color: '#047857'}}>Strengths Summary:</Text>
-              <Text style={{...styles.text, color: '#047857'}}>{feedback.technical_skills.strengths_summary}</Text>
-            </View>
-            
-            <View style={{marginTop: 10}}>
-              <Text style={{...styles.text, fontWeight: 'bold', color: '#B45309'}}>Areas for Improvement:</Text>
-              <Text style={{...styles.text, color: '#B45309'}}>{feedback.technical_skills.weaknesses_summary}</Text>
-            </View>
-            
-            <Text style={{...styles.text, marginTop: 15, marginBottom: 5, fontWeight: 'bold'}}>Skills Assessment:</Text>
-            
-            {/* Required Skills First */}
-            {feedback.technical_skills.skills && feedback.technical_skills.skills.filter(s => s.is_required).length > 0 && (
-              <View style={{marginBottom: 10}}>
-                <Text style={{...styles.text, fontWeight: 'bold', fontSize: 11, color: '#4338CA', marginBottom: 5}}>Required Skills:</Text>
-                
-                {feedback.technical_skills.skills.filter(s => s.is_required).map((skill, index) => (
-                  <View key={index} style={{...styles.skillRow, borderColor: skill.availability_status === "Not Available" ? '#E5E7EB' : '#C7D2FE'}}>
-                    <Text style={styles.skillName}>{skill.skill_name}</Text>
-                    <Text style={styles.skillLevel}>
-                      {skill.availability_status === "Not Available" ? "Not Mentioned" : skill.level}
-                    </Text>
-                    <Text style={styles.skillRating}>
-                      {skill.availability_status === "Not Available" ? "-" : skill.rating_text}
-                    </Text>
-                    <View style={styles.ratingDots}>
-                      {skill.availability_status === "Not Available" ? (
-                        <Text style={{fontSize: 8, color: '#6B7280'}}>N/A</Text>
-                      ) : (
-                        [1, 2, 3, 4, 5].map((dot) => (
-                          <View 
-                            key={dot} 
-                            style={[
-                              styles.dot, 
-                              dot <= skill.rating_score ? {...styles.dotFilled, backgroundColor: '#4338CA'} : styles.dotEmpty
-                            ]} 
-                          />
-                        ))
-                      )}
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-            
-            {/* Other Skills */}
-            {feedback.technical_skills.skills && feedback.technical_skills.skills.filter(s => !s.is_required).length > 0 && (
-              <View>
-                <Text style={{...styles.text, fontWeight: 'bold', fontSize: 11, marginBottom: 5}}>Other Skills Detected:</Text>
-                
-                {feedback.technical_skills.skills.filter(s => !s.is_required).map((skill, index) => (
-                  <View key={index} style={styles.skillRow}>
-                    <Text style={styles.skillName}>{skill.skill_name}</Text>
-                    <Text style={styles.skillLevel}>{skill.level}</Text>
-                    <Text style={styles.skillRating}>{skill.rating_text}</Text>
-                    <View style={styles.ratingDots}>
-                      {[1, 2, 3, 4, 5].map((dot) => (
-                        <View 
-                          key={dot} 
-                          style={[
-                            styles.dot, 
-                            dot <= skill.rating_score ? styles.dotFilled : styles.dotEmpty
-                          ]} 
-                        />
-                      ))}
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-            
-            <Text style={{...styles.text, marginTop: 15, fontWeight: 'bold'}}>Technical Verdict:</Text>
-            <Text style={{...styles.text, fontStyle: 'italic', color: '#4338CA'}}>{feedback.technical_skills.verdict}</Text>
-          </View>
-        )}
-        
-        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
-          `${pageNumber} / ${totalPages}`
-        )} fixed />
-      </Page>
-      
-      {/* Communication Skills Page */}
-      <Page size="A4" style={styles.page}>
-        {/* Communication Skills */}
-        {feedback.communication_skills && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Communication Skills</Text>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Overall Rating:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.communication_skills.rating / 5) * 100}%`,
-                  backgroundColor: getRatingColor(feedback.communication_skills.rating)
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.communication_skills.rating}/5</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Language Fluency:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.communication_skills.language_fluency / 5) * 100}%`,
-                  backgroundColor: getRatingColor(feedback.communication_skills.language_fluency)
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.communication_skills.language_fluency}/5</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Technical Articulation:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.communication_skills.technical_articulation / 5) * 100}%`,
-                  backgroundColor: getRatingColor(feedback.communication_skills.technical_articulation)
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.communication_skills.technical_articulation}/5</Text>
-            </View>
-            
-            <Text style={{...styles.text, marginTop: 10, fontWeight: 'bold'}}>Communication Summary:</Text>
-            <Text style={styles.text}>{feedback.communication_skills.summary}</Text>
-            
-            <Text style={{...styles.text, marginTop: 5, fontWeight: 'bold'}}>Impact:</Text>
-            <Text style={styles.text}>{feedback.communication_skills.impact}</Text>
-          </View>
-        )}
-
-        {/* Interview Questions */}
-        {feedback.questions && feedback.questions.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Interview Questions Analysis</Text>
-            
-            {feedback.questions.map((q, index) => (
-              <View key={index} style={{marginBottom: 15, borderBottomWidth: index < feedback.questions.length - 1 ? 1 : 0, borderBottomColor: '#E5E7EB', paddingBottom: 10}}>
-                <Text style={{...styles.text, fontWeight: 'bold'}}>Question {index + 1}:</Text>
-                <Text style={{...styles.text, marginBottom: 5}}>{q.question}</Text>
-                
-                <Text style={{...styles.text, fontWeight: 'bold'}}>Answer:</Text>
-                <Text style={{...styles.text, marginBottom: 5, fontStyle: 'italic'}}>{q.answer}</Text>
-                
-                <View style={styles.scoreRow}>
-                  <Text style={styles.scoreLabel}>Rating:</Text>
-                  <View style={styles.scoreBar}>
-                    <View style={{
-                      ...styles.scoreBarFill, 
-                      width: `${(q.rating / 5) * 100}%`,
-                      backgroundColor: getRatingColor(q.rating)
-                    }} />
-                  </View>
-                  <Text style={styles.scoreValue}>{q.rating}/5</Text>
-                </View>
-                
-                <Text style={{...styles.text, fontWeight: 'bold', marginTop: 5}}>Feedback:</Text>
-                <Text style={styles.text}>{q.feedback}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-        
-        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
-          `${pageNumber} / ${totalPages}`
-        )} fixed />
-      </Page>
-      
-      {/* Final Assessment Page */}
-      <Page size="A4" style={styles.page}>
-        {/* Actionable Insights */}
-        {feedback.actionable_insights && feedback.actionable_insights.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Actionable Insights</Text>
-            
-            {feedback.actionable_insights.map((insight, index) => (
-              <View key={index} style={styles.listItem}>
-                <Text style={styles.bullet}>•</Text>
-                <Text style={styles.listItemContent}>{insight}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Recommendations */}
-        {feedback.recommendations && feedback.recommendations.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recommendations</Text>
-            
-            {feedback.recommendations.map((rec, index) => (
-              <View key={index} style={styles.listItem}>
-                <Text style={styles.bullet}>•</Text>
-                <Text style={styles.listItemContent}>{rec}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Final Assessment */}
-        {feedback.final_assessment && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Final Assessment</Text>
-            
-            <View style={styles.summaryBox}>
-              <Text style={styles.summaryText}>{feedback.final_assessment}</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Confidence Level:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.confidence_level / 5) * 100}%`
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.confidence_level}/5</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Culture Fit:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.culture_fit / 5) * 100}%`
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.culture_fit}/5</Text>
-            </View>
-            
-            <View style={styles.scoreRow}>
-              <Text style={styles.scoreLabel}>Learning Aptitude:</Text>
-              <View style={styles.scoreBar}>
-                <View style={{
-                  ...styles.scoreBarFill, 
-                  width: `${(feedback.learning_aptitude / 5) * 100}%`
-                }} />
-              </View>
-              <Text style={styles.scoreValue}>{feedback.learning_aptitude}/5</Text>
-            </View>
-            
-            {feedback.interviewer_notes && (
-              <>
-                <Text style={{...styles.text, marginTop: 10, fontWeight: 'bold'}}>Interviewer Notes:</Text>
-                <Text style={{...styles.text, fontStyle: 'italic'}}>{feedback.interviewer_notes}</Text>
-              </>
-            )}
-          </View>
-        )}
-        
-        {/* Tabular Assessment - New Section */}
-        <View style={styles.section}>
+               {/* Tabular Assessment - New Section */}
+               <View style={styles.section}>
           <Text style={styles.sectionTitle}>Assessment Summary</Text>
           
           <View style={styles.table}>
@@ -803,7 +526,7 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
                 </View>
                 <View style={styles.tableCol}>
                   <Text style={{...styles.tableCell, backgroundColor: '#F3E8FF', color: '#7E22CE', padding: 2, borderRadius: 4, textAlign: 'center', fontSize: 8}}>
-                    {feedback.technical_skills.verdict ? feedback.technical_skills.verdict.split(' ')[0] : 'N/A'}
+                    {feedback.technical_skills.verdict ? feedback.technical_skills.breadth_of_tech_stack : 'N/A'} / 5
                   </Text>
                 </View>
                 <View style={{...styles.tableCol, flex: 2}}>
@@ -1164,6 +887,287 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
             </View>
           )}
         </View>
+      </Page>
+
+      {/* Technical Skills Page */}
+      <Page size="A4" style={styles.page}>
+        {/* Technical Skills Assessment */}
+        {feedback.technical_skills && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Technical Skills Assessment</Text>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Core Topics Depth:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{...styles.scoreBarFill, width: `${(feedback.technical_skills.depth_in_core_topics / 5) * 100}%`}} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.technical_skills.depth_in_core_topics}/5</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Tech Stack Breadth:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{...styles.scoreBarFill, width: `${(feedback.technical_skills.breadth_of_tech_stack / 5) * 100}%`}} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.technical_skills.breadth_of_tech_stack}/5</Text>
+            </View>
+            
+            <Text style={{...styles.text, marginTop: 10, marginBottom: 5, fontWeight: 'bold'}}>Overall Technical Review:</Text>
+            <Text style={styles.text}>{feedback.technical_skills.overall_tech_review}</Text>
+            
+            <View style={{marginTop: 15}}>
+              <Text style={{...styles.text, fontWeight: 'bold', color: '#047857'}}>Strengths Summary:</Text>
+              <Text style={{...styles.text, color: '#047857'}}>{feedback.technical_skills.strengths_summary}</Text>
+            </View>
+            
+            <View style={{marginTop: 10}}>
+              <Text style={{...styles.text, fontWeight: 'bold', color: '#B45309'}}>Areas for Improvement:</Text>
+              <Text style={{...styles.text, color: '#B45309'}}>{feedback.technical_skills.weaknesses_summary}</Text>
+            </View>
+            
+            <Text style={{...styles.text, marginTop: 15, marginBottom: 5, fontWeight: 'bold'}}>Skills Assessment:</Text>
+            
+            {/* Required Skills First */}
+            {feedback.technical_skills.skills && feedback.technical_skills.skills.filter(s => s.is_required).length > 0 && (
+              <View style={{marginBottom: 10}}>
+                <Text style={{...styles.text, fontWeight: 'bold', fontSize: 11, color: '#4338CA', marginBottom: 5}}>Required Skills:</Text>
+                
+                {feedback.technical_skills.skills.filter(s => s.is_required).map((skill, index) => (
+                  <View key={index} style={{...styles.skillRow, borderColor: skill.availability_status === "Not Available" ? '#E5E7EB' : '#C7D2FE'}}>
+                    <Text style={styles.skillName}>{skill.skill_name}</Text>
+                    <Text style={styles.skillLevel}>
+                      {skill.availability_status === "Not Available" ? "Not Mentioned" : skill.level}
+                    </Text>
+                    <Text style={styles.skillRating}>
+                      {skill.availability_status === "Not Available" ? "-" : skill.rating_text}
+                    </Text>
+                    <View style={styles.ratingDots}>
+                      {skill.availability_status === "Not Available" ? (
+                        <Text style={{fontSize: 8, color: '#6B7280'}}>N/A</Text>
+                      ) : (
+                        [1, 2, 3, 4, 5].map((dot) => (
+                          <View 
+                            key={dot} 
+                            style={[
+                              styles.dot, 
+                              dot <= skill.rating_score ? {...styles.dotFilled, backgroundColor: '#4338CA'} : styles.dotEmpty
+                            ]} 
+                          />
+                        ))
+                      )}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+            
+            {/* Other Skills */}
+            {feedback.technical_skills.skills && feedback.technical_skills.skills.filter(s => !s.is_required).length > 0 && (
+              <View>
+                <Text style={{...styles.text, fontWeight: 'bold', fontSize: 11, marginBottom: 5}}>Other Skills Detected:</Text>
+                
+                {feedback.technical_skills.skills.filter(s => !s.is_required).map((skill, index) => (
+                  <View key={index} style={styles.skillRow}>
+                    <Text style={styles.skillName}>{skill.skill_name}</Text>
+                    <Text style={styles.skillLevel}>{skill.level}</Text>
+                    <Text style={styles.skillRating}>{skill.rating_text}</Text>
+                    <View style={styles.ratingDots}>
+                      {[1, 2, 3, 4, 5].map((dot) => (
+                        <View 
+                          key={dot} 
+                          style={[
+                            styles.dot, 
+                            dot <= skill.rating_score ? styles.dotFilled : styles.dotEmpty
+                          ]} 
+                        />
+                      ))}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+            
+            <Text style={{...styles.text, marginTop: 15, fontWeight: 'bold'}}>Technical Verdict:</Text>
+            <Text style={{...styles.text, fontStyle: 'italic', color: '#4338CA'}}>{feedback.technical_skills.verdict}</Text>
+          </View>
+        )}
+        
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `${pageNumber} / ${totalPages}`
+        )} fixed />
+      </Page>
+      
+      {/* Communication Skills Page */}
+      <Page size="A4" style={styles.page}>
+
+
+        {/* Interview Questions */}
+        {feedback.questions && feedback.questions.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Interview Questions Analysis</Text>
+            
+            {feedback.questions.map((q, index) => (
+              <View key={index} style={{marginBottom: 15, borderBottomWidth: index < feedback.questions.length - 1 ? 1 : 0, borderBottomColor: '#E5E7EB', paddingBottom: 10}}>
+                <Text style={{...styles.text, fontWeight: 'bold'}}>Question {index + 1}:</Text>
+                <Text style={{...styles.text, marginBottom: 5}}>{q.question}</Text>
+                
+                <Text style={{...styles.text, fontWeight: 'bold'}}>Answer:</Text>
+                <Text style={{...styles.text, marginBottom: 5, fontStyle: 'italic'}}>{q.answer}</Text>
+                
+                <View style={styles.scoreRow}>
+                  <Text style={styles.scoreLabel}>Rating:</Text>
+                  <View style={styles.scoreBar}>
+                    <View style={{
+                      ...styles.scoreBarFill, 
+                      width: `${(q.rating / 5) * 100}%`,
+                      backgroundColor: getRatingColor(q.rating)
+                    }} />
+                  </View>
+                  <Text style={styles.scoreValue}>{q.rating}/5</Text>
+                </View>
+                
+                <Text style={{...styles.text, fontWeight: 'bold', marginTop: 5}}>Feedback:</Text>
+                <Text style={styles.text}>{q.feedback}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+        
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `${pageNumber} / ${totalPages}`
+        )} fixed />
+      </Page>
+      
+      {/* Final Assessment Page */}
+      <Page size="A4" style={styles.page}>
+                {/* Communication Skills */}
+                {feedback.communication_skills && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Communication Skills</Text>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Overall Rating:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.communication_skills.rating / 5) * 100}%`,
+                  backgroundColor: getRatingColor(feedback.communication_skills.rating)
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.communication_skills.rating}/5</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Language Fluency:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.communication_skills.language_fluency / 5) * 100}%`,
+                  backgroundColor: getRatingColor(feedback.communication_skills.language_fluency)
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.communication_skills.language_fluency}/5</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Technical Articulation:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.communication_skills.technical_articulation / 5) * 100}%`,
+                  backgroundColor: getRatingColor(feedback.communication_skills.technical_articulation)
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.communication_skills.technical_articulation}/5</Text>
+            </View>
+            
+            <Text style={{...styles.text, marginTop: 10, fontWeight: 'bold'}}>Communication Summary:</Text>
+            <Text style={styles.text}>{feedback.communication_skills.summary}</Text>
+            
+            <Text style={{...styles.text, marginTop: 5, fontWeight: 'bold'}}>Impact:</Text>
+            <Text style={styles.text}>{feedback.communication_skills.impact}</Text>
+          </View>
+        )}
+        {/* Actionable Insights */}
+        {feedback.actionable_insights && feedback.actionable_insights.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Actionable Insights</Text>
+            
+            {feedback.actionable_insights.map((insight, index) => (
+              <View key={index} style={styles.listItem}>
+                <Text style={styles.bullet}>•</Text>
+                <Text style={styles.listItemContent}>{insight}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Recommendations */}
+        {feedback.recommendations && feedback.recommendations.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Recommendations</Text>
+            
+            {feedback.recommendations.map((rec, index) => (
+              <View key={index} style={styles.listItem}>
+                <Text style={styles.bullet}>•</Text>
+                <Text style={styles.listItemContent}>{rec}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Final Assessment */}
+        {feedback.final_assessment && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Final Assessment</Text>
+            
+            <View style={styles.summaryBox}>
+              <Text style={styles.summaryText}>{feedback.final_assessment}</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Confidence Level:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.confidence_level / 5) * 100}%`
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.confidence_level}/5</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Culture Fit:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.culture_fit / 5) * 100}%`
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.culture_fit}/5</Text>
+            </View>
+            
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>Learning Aptitude:</Text>
+              <View style={styles.scoreBar}>
+                <View style={{
+                  ...styles.scoreBarFill, 
+                  width: `${(feedback.learning_aptitude / 5) * 100}%`
+                }} />
+              </View>
+              <Text style={styles.scoreValue}>{feedback.learning_aptitude}/5</Text>
+            </View>
+            
+            {feedback.interviewer_notes && (
+              <>
+                <Text style={{...styles.text, marginTop: 10, fontWeight: 'bold'}}>Interviewer Notes:</Text>
+                <Text style={{...styles.text, fontStyle: 'italic'}}>{feedback.interviewer_notes}</Text>
+              </>
+            )}
+          </View>
+        )}
+        
+ 
         
         <View style={styles.footer}>
           <Text>Video Analysis Report • Generated by Build Fast with AI • {new Date().toLocaleDateString()}</Text>

@@ -649,12 +649,12 @@ export default function Home() {
                       <td className="py-3 px-4">
                         {transcriptionResult.feedback.technical_skills?.verdict ? (
                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                            {transcriptionResult.feedback.technical_skills.verdict.split(' ')[0]}
+                            {transcriptionResult.feedback.technical_skills.breadth_of_tech_stack} / 5
                           </span>
                         ) : "N/A"}
                       </td>
                       <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.technical_skills?.strengths_summary?.substring(0, 100)}...
+                        {transcriptionResult.feedback.technical_skills?.strengths_summary?.substring(0, 250)}...
                       </td>
                     </tr>
                     
@@ -694,7 +694,7 @@ export default function Home() {
                         ) : "N/A"}
                       </td>
                       <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.communication_skills?.summary?.substring(0, 100)}...
+                        {transcriptionResult.feedback.communication_skills?.summary?.substring(0, 250)}...
                       </td>
                     </tr>
                     
@@ -767,7 +767,7 @@ export default function Home() {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.final_assessment?.substring(0, 100)}...
+                        {transcriptionResult.feedback.final_assessment?.substring(0, 250)}...
                       </td>
                     </tr>
                     
