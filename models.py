@@ -3,6 +3,7 @@ from typing import List, Dict, Any, Optional
 
 class VideoTranscriptionRequest(BaseModel):
     video_url: HttpUrl
+    required_skills: Optional[List[str]] = []
 
 class TranscriptionSegment(BaseModel):
     start_time: float
@@ -10,18 +11,24 @@ class TranscriptionSegment(BaseModel):
     text: str
     confidence: float = 0.0
 
+class RequiredSkill(BaseModel):
+    name: str
+
 class TechnicalSkill(BaseModel):
     skill_name: str
-    level: str  # Beginner | Intermediate | Professional | Expert
-    rating_text: str  # Excellent | Very Good | Good | Satisfactory | Needs Improvement
+    level: Optional[str] = None  # Beginner | Intermediate | Professional | Expert
+    rating_text: Optional[str] = None  # Excellent | Very Good | Good | Satisfactory | Needs Improvement
     rating_score: int  # 1-5
-    detailed_feedback: str
+    detailed_feedback: Optional[str] = None
     strengths: List[str]
     areas_for_improvement: List[str]
     examples_mentioned: List[str]
+    is_required: Optional[bool] = False
+    availability_status: Optional[str] = None  # Available | Not Available
 
 class TechnicalSkillsAssessment(BaseModel):
     skills: List[TechnicalSkill]
+    required_skills: Optional[List[RequiredSkill]] = []
     overall_tech_review: str
     depth_in_core_topics: int
     breadth_of_tech_stack: int

@@ -4,7 +4,7 @@ const FASTAPI_URL = process.env.FASTAPI_URL || "http://localhost:8000";
 
 export async function POST(request: Request) {
   try {
-    const { videoUrl } = await request.json();
+    const { videoUrl, requiredSkills } = await request.json();
 
     if (!videoUrl) {
       return NextResponse.json(
@@ -22,7 +22,9 @@ export async function POST(request: Request) {
       body: JSON.stringify({ 
         video_url: videoUrl,
         // Ensure backend knows to return the enhanced feedback structure
-        include_enhanced_feedback: true 
+        include_enhanced_feedback: true,
+        // Pass the required skills to evaluate
+        required_skills: requiredSkills || []
       }),
     });
 
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
     
     // Ensure the response includes the enhanced feedback structure
     // The returned JSON should match the TranscriptionResponse interface in page.tsx
-    // Including the new communication_skills and technical_skills fields
+    // Including the new communication_skills, technical_skills, and required_skills fields
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error in transcription:", error);

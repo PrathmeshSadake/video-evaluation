@@ -18,10 +18,18 @@ class FeedbackService:
         )
         logger.info("OpenAI model initialized successfully")
 
-    def generate_feedback(self, transcription_text: str) -> Dict[str, Any]:
+    def generate_feedback(self, transcription_text: str, required_skills: List[str] = None) -> Dict[str, Any]:
         """Generate comprehensive feedback based on transcription using OpenAI"""
         try:
             logger.info("Generating feedback using OpenAI...")
+            
+            # Default to empty list if required_skills is None
+            if required_skills is None:
+                required_skills = []
+                
+            # Log the required skills
+            if required_skills:
+                logger.info(f"Required skills to evaluate: {', '.join(required_skills)}")
 
             # Enhanced JSON schema for technical skills assessment
             schema = {
@@ -74,7 +82,14 @@ class FeedbackService:
                                 "detailed_feedback": "string - Comprehensive feedback like the example",
                                 "strengths": ["string - Specific strengths demonstrated"],
                                 "areas_for_improvement": ["string - Areas needing work"],
-                                "examples_mentioned": ["string - Specific examples or concepts mentioned"]
+                                "examples_mentioned": ["string - Specific examples or concepts mentioned"],
+                                "is_required": "boolean - Whether this skill was specified as required",
+                                "availability_status": "string - 'Available' or 'Not Available' in the transcript"
+                            }
+                        ],
+                        "required_skills": [
+                            {
+                                "name": "string - Name of the required skill"
                             }
                         ],
                         "overall_tech_review": "string - Summary of technical performance",
@@ -127,6 +142,24 @@ class FeedbackService:
                             "answer": "I would implement rate limiting, response caching, connection pooling, and use HttpClientFactory. Also consider Polly for circuit breaker patterns and background jobs for heavy processing.",
                             "rating": 5,
                             "feedback": "Excellent comprehensive answer showing deep understanding of API optimization techniques."
+                        },
+                         {
+                            "question": "How would you handle database optimization for high-traffic applications?",
+                            "answer": "I'd focus on indexing strategies, query optimization, and implementing caching layers. For write-heavy applications, I'd consider sharding and read replicas.",
+                            "rating": 3,
+                            "feedback": "Good foundation but limited depth in advanced optimization and performance tuning."
+                        },
+                        {
+                            "question": "What is the difference between a RESTful API and a GraphQL API?",
+                            "answer": "A RESTful API is a stateless, client-server, hypermedia-driven interface that uses HTTP methods to create, read, update, and delete resources. GraphQL is a query language for APIs that allows clients to request exactly the data they need and nothing more.",
+                            "rating": 4,
+                            "feedback": "Good understanding of the differences between REST and GraphQL."
+                        },
+                        {
+                            "question": "How would you implement a scalable event-driven architecture?",
+                            "answer": "I'd use Azure Service Bus for message queuing, Azure Event Grid for event notifications, and Azure Functions for serverless processing. For real-time features, I'd use SignalR for bidirectional communication.",
+                            "rating": 4,
+                            "feedback": "Good understanding of event-driven architecture patterns."
                         }
                     ],
                     "communication_skills": {
@@ -153,7 +186,36 @@ class FeedbackService:
                                     "Could elaborate more on advanced debugging techniques",
                                     "Deeper discussion of memory management"
                                 ],
-                                "examples_mentioned": ["Redis caching", "Azure Monitor", "SignalR", "background jobs"]
+                                "examples_mentioned": ["Redis caching", "Azure Monitor", "SignalR", "background jobs"],
+                                "is_required": True,
+                                "availability_status": "Available"
+                            },
+                            {
+                                "skill_name": "React",
+                                "level": "Beginner",
+                                "rating_text": "Needs Improvement",
+                                "rating_score": 1,
+                                "detailed_feedback": "The candidate briefly mentioned React but did not demonstrate significant knowledge or experience with the framework.",
+                                "strengths": [
+                                    "Basic awareness of React as a frontend technology"
+                                ],
+                                "areas_for_improvement": [
+                                    "Develop practical experience with React components",
+                                    "Learn React hooks and state management",
+                                    "Practice building complete React applications"
+                                ],
+                                "examples_mentioned": [],
+                                "is_required": True,
+                                "availability_status": "Available"
+                            },
+                            {
+                                "skill_name": "GraphQL",
+                                "is_required": True,
+                                "availability_status": "Not Available",
+                                "rating_score": 0,
+                                "strengths": [],
+                                "areas_for_improvement": [],
+                                "examples_mentioned": []
                             },
                             {
                                 "skill_name": "AWS",
@@ -170,22 +232,14 @@ class FeedbackService:
                                     "More precise terminology usage",
                                     "Deeper security best practices"
                                 ],
-                                "examples_mentioned": ["ECS", "CloudFormation", "CodePipeline", "Aurora", "ElastiCache"]
-                            },
-                            {
-                                "skill_name": "Web API",
-                                "level": "Professional",
-                                "rating_text": "Excellent",
-                                "rating_score": 5,
-                                "detailed_feedback": "The candidate gave a robust overview of optimizing high-traffic APIs. Techniques like rate limiting, response caching, connection pooling, HttpClientFactory, and background jobs were mentioned. Use of Polly for circuit breaker and retry patterns was a highlight. Their knowledge reflects real-world production API experience.",
-                                "strengths": [
-                                    "Comprehensive optimization strategies",
-                                    "Real-world production experience",
-                                    "Advanced patterns like circuit breaker"
-                                ],
-                                "areas_for_improvement": [],
-                                "examples_mentioned": ["Polly", "HttpClientFactory", "rate limiting", "connection pooling"]
+                                "examples_mentioned": ["ECS", "CloudFormation", "CodePipeline", "Aurora", "ElastiCache"],
+                                "is_required": False
                             }
+                        ],
+                        "required_skills": [
+                            {"name": ".NET Core"},
+                            {"name": "React"},
+                            {"name": "GraphQL"}
                         ],
                         "overall_tech_review": "Strong technical candidate with excellent backend expertise and solid cloud architecture knowledge. Ready for senior-level responsibilities.",
                         "depth_in_core_topics": 4,
@@ -202,40 +256,64 @@ class FeedbackService:
                 }
             }
 
-            # Create the enhanced prompt template
+            # Create the enhanced prompt template with required skills instructions
+            prompt_text = """You are an expert technical interviewer and feedback analyst specializing in comprehensive technical assessments.
+
+            Your task is to analyze the provided interview transcription and generate detailed feedback that includes:
+            1. Extract all main technical skills mentioned in the transcript
+            2. For each skill, provide detailed feedback similar to a professional technical assessment
+            3. Include specific ratings, strengths, areas for improvement, and examples mentioned
+            4. Provide an overall technical summary with strengths, weaknesses, and final verdict
+            5. Extract all questions and answers from the interview transcript and provide feedback on them
+
+            Additionally, you need to evaluate the following specific required skills:
+            {required_skills_list}
+
+            For each required skill:
+            - Check if the skill is mentioned or discussed in the interview
+            - If available, provide a detailed assessment with level, rating, and feedback
+            - If not available, mark it as "Not Available" and set availability_status to "Not Available"
+            - Set is_required to true for all required skills
+
+            Focus on:
+            - Identifying specific technologies, frameworks, or technical concepts discussed
+            - Assessing the depth of knowledge demonstrated for each skill
+            - Providing constructive, professional feedback
+            - Rating skills on both numerical (1-5) and text scales (Excellent, Very Good, Good, Satisfactory, Needs Improvement)
+            - Including specific examples or concepts mentioned by the candidate
+            - Evaluating the candidate's ability to discuss the skill in detail
+            - Evaluating the candidate's ability to apply the skill in a practical way
+            - Evaluating the candidate's ability to discuss the skill in a way that is clear and concise
+            - Evaluating the candidate's ability to discuss the skill in a way that is accurate and correct
+            - Evaluating the candidate's ability to discuss the skill in a way that is consistent with the skill's definition
+            - Evaluating the candidate's ability to discuss the skill in a way that is consistent with the skill's best practices
+            - Evaluating the candidate's ability to discuss the skill in a way that is consistent with the skill's industry standards
+
+            Follow the JSON schema exactly and ensure all ratings are integers from 1-5.
+            
+            Use this JSON schema:
+            {schema}
+            
+            Here's an example of the expected detailed feedback format:
+            {example}
+            
+            Provide your feedback in valid JSON format following the exact same structure."""
+
+            # Format the required skills as a readable list for the prompt
+            required_skills_formatted = "None specified" if not required_skills else "\n".join([f"- {skill}" for skill in required_skills])
+
+            # Create the prompt template
             prompt = ChatPromptTemplate.from_messages([
-                ("system", """You are an expert technical interviewer and feedback analyst specializing in comprehensive technical assessments.
-
-                Your task is to analyze the provided interview transcription and generate detailed feedback that includes:
-                1. Extract 2-3 main technical skills mentioned in the transcript
-                2. For each skill, provide detailed feedback similar to a professional technical assessment
-                3. Include specific ratings, strengths, areas for improvement, and examples mentioned
-                4. Provide an overall technical summary with strengths, weaknesses, and final verdict
-
-                Focus on:
-                - Identifying specific technologies, frameworks, or technical concepts discussed
-                - Assessing the depth of knowledge demonstrated for each skill
-                - Providing constructive, professional feedback
-                - Rating skills on both numerical (1-5) and text scales (Excellent, Very Good, Good, Satisfactory, Needs Improvement)
-                - Including specific examples or concepts mentioned by the candidate
-
-                Follow the JSON schema exactly and ensure all ratings are integers from 1-5.
-                
-                Use this JSON schema:
-                {schema}
-                
-                Here's an example of the expected detailed feedback format:
-                {example}
-                
-                Provide your feedback in valid JSON format following the exact same structure."""),
+                ("system", prompt_text),
                 ("user", "Here's the interview transcription to analyze:\n\n{transcription}")
             ])
 
-            # Format the prompt with our schema, example, and transcription
+            # Format the prompt with our schema, example, transcription, and required skills
             formatted_prompt = prompt.format_messages(
                 schema=json.dumps(schema, indent=2),
                 example=json.dumps(example, indent=2),
-                transcription=transcription_text
+                transcription=transcription_text,
+                required_skills_list=required_skills_formatted
             )
 
             # Get response from OpenAI
@@ -257,17 +335,49 @@ class FeedbackService:
                     if 'feedback' in feedback_data and isinstance(feedback_data['feedback'], dict):
                         feedback = feedback_data['feedback']
                         
-                        # Validate that we have the required technical skills structure
-                        if ('technical_skills' in feedback and 
-                            isinstance(feedback['technical_skills'], dict) and
-                            'skills' in feedback['technical_skills'] and
-                            isinstance(feedback['technical_skills']['skills'], list) and
-                            len(feedback['technical_skills']['skills']) > 0):
+                        # Add required skills to the technical_skills section if they're not already there
+                        if 'technical_skills' in feedback:
+                            if 'skills' not in feedback['technical_skills']:
+                                feedback['technical_skills']['skills'] = []
+                                
+                            # Add required_skills section if it doesn't exist
+                            if 'required_skills' not in feedback['technical_skills']:
+                                feedback['technical_skills']['required_skills'] = []
+                                
+                            # Add each required skill to the required_skills list
+                            for skill_name in required_skills:
+                                # Check if this required skill is already in the skills list
+                                skill_exists = False
+                                for skill in feedback['technical_skills']['skills']:
+                                    if skill.get('skill_name', '').lower() == skill_name.lower():
+                                        # Mark existing skill as required
+                                        skill['is_required'] = True
+                                        if 'availability_status' not in skill:
+                                            skill['availability_status'] = 'Available'
+                                        skill_exists = True
+                                        break
+                                
+                                # If skill wasn't found in the skills list, add it as not available
+                                if not skill_exists:
+                                    feedback['technical_skills']['skills'].append({
+                                        'skill_name': skill_name,
+                                        'is_required': True,
+                                        'availability_status': 'Not Available',
+                                        'rating_score': 0,
+                                        'strengths': [],
+                                        'areas_for_improvement': [],
+                                        'examples_mentioned': []
+                                    })
+                                    
+                                # Add to required_skills list
+                                feedback['technical_skills']['required_skills'].append({
+                                    'name': skill_name
+                                })
                             
-                            logger.info("Successfully generated enhanced technical skills feedback")
+                            logger.info("Successfully generated enhanced technical skills feedback with required skills evaluation")
                             return feedback
                         else:
-                            logger.warning("Response missing proper technical_skills structure")
+                            logger.warning("Response missing technical_skills structure")
                     else:
                         logger.warning("Response did not contain expected 'feedback' key or structure")
                 else:
@@ -275,19 +385,22 @@ class FeedbackService:
                 
                 # If we get here, the response wasn't properly formatted
                 logger.info("Using enhanced fallback feedback due to response format issues")
-                return self._get_fallback_feedback(transcription_text)
+                return self._get_fallback_feedback(transcription_text, required_skills)
                 
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse JSON from response: {e}")
                 logger.info("Using enhanced fallback feedback due to JSON parsing error")
-                return self._get_fallback_feedback(transcription_text)
+                return self._get_fallback_feedback(transcription_text, required_skills)
                 
         except Exception as e:
             logger.error(f"Error generating feedback: {str(e)}")
-            return self._get_fallback_feedback(transcription_text)
+            return self._get_fallback_feedback(transcription_text, required_skills)
 
-    def _get_fallback_feedback(self, transcription_text: str) -> Dict[str, Any]:
+    def _get_fallback_feedback(self, transcription_text: str, required_skills: List[str] = None) -> Dict[str, Any]:
         """Provide complete fallback feedback when OpenAI fails"""
+        if required_skills is None:
+            required_skills = []
+            
         word_count = len(transcription_text.split())
         
         # Analyze the text for basic technical terms to provide meaningful fallback
@@ -306,9 +419,47 @@ class FeedbackService:
         
         # Generate skills based on detected technical terms
         skills = []
-        if technical_terms:
-            # Take first 3 technical terms found
-            for i, term in enumerate(technical_terms[:3]):
+        
+        # First, add required skills
+        for skill_name in required_skills:
+            # Check if this required skill is in the detected technical terms
+            is_available = any(term.lower() == skill_name.lower() for term in technical_terms)
+            
+            if is_available:
+                skills.append({
+                    "skill_name": skill_name,
+                    "level": "Professional",
+                    "rating_text": "Good",
+                    "rating_score": 3,
+                    "detailed_feedback": f"The candidate demonstrated familiarity with {skill_name} concepts and showed practical understanding. Their discussion covered relevant aspects of {skill_name} technology, indicating a solid foundation with room for growth in advanced topics.",
+                    "strengths": [
+                        f"Basic to intermediate understanding of {skill_name}",
+                        "Able to discuss practical applications",
+                        "Shows awareness of common patterns and practices"
+                    ],
+                    "areas_for_improvement": [
+                        f"Could provide more specific examples of {skill_name} usage",
+                        "Deeper technical details would strengthen responses",
+                        "More discussion of best practices and optimization"
+                    ],
+                    "examples_mentioned": [skill_name],
+                    "is_required": True,
+                    "availability_status": "Available"
+                })
+            else:
+                skills.append({
+                    "skill_name": skill_name,
+                    "is_required": True,
+                    "availability_status": "Not Available",
+                    "rating_score": 0,
+                    "strengths": [],
+                    "areas_for_improvement": [],
+                    "examples_mentioned": []
+                })
+        
+        # Then add detected skills that aren't in the required skills
+        for term in technical_terms:
+            if not any(skill.get('skill_name', '').lower() == term.lower() for skill in skills):
                 skills.append({
                     "skill_name": term,
                     "level": "Professional",
@@ -325,10 +476,11 @@ class FeedbackService:
                         "Deeper technical details would strengthen responses",
                         "More discussion of best practices and optimization"
                     ],
-                    "examples_mentioned": [term] + (technical_terms[i+1:i+3] if i < len(technical_terms)-1 else [])
+                    "examples_mentioned": [term],
+                    "is_required": False
                 })
         
-        # If no technical terms found, provide a general technical skill
+        # If no skills found, provide a general technical skill
         if not skills:
             skills.append({
                 "skill_name": "General Technical Knowledge",
@@ -346,8 +498,12 @@ class FeedbackService:
                     "Deeper dive into chosen technologies",
                     "Stronger articulation of technical concepts"
                 ],
-                "examples_mentioned": ["Software development", "Problem solving"]
+                "examples_mentioned": ["Software development", "Problem solving"],
+                "is_required": False
             })
+        
+        # Create required_skills list for the response
+        required_skills_list = [{"name": skill} for skill in required_skills]
         
         return {
             "overall_sentiment": "neutral",
@@ -394,6 +550,7 @@ class FeedbackService:
             },
             "technical_skills": {
                 "skills": skills,
+                "required_skills": required_skills_list,
                 "overall_tech_review": f"The candidate demonstrated competency in {len(skills)} technical area{'s' if len(skills) > 1 else ''} with solid foundational knowledge. Their responses showed practical understanding of key concepts with opportunities for deeper technical exploration.",
                 "depth_in_core_topics": 3,
                 "breadth_of_tech_stack": 3,

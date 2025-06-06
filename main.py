@@ -59,6 +59,7 @@ async def transcribe_video(
     Transcribe video from URL and generate feedback
     
     - **video_url**: URL of the video to transcribe (YouTube, direct video links, etc.)
+    - **required_skills**: Optional list of skills to evaluate in the interview
     
     Returns transcription segments, full text, and comprehensive feedback analysis.
     """
@@ -70,6 +71,9 @@ async def transcribe_video(
     try:
         logger.info(f"Processing video URL: {request.video_url}")
         
+        if request.required_skills and len(request.required_skills) > 0:
+            logger.info(f"Required skills to evaluate: {', '.join(request.required_skills)}")
+        
         # Step 1: Download video and extract audio
         audio_path, duration = video_processor.process_video_url(str(request.video_url))
         logger.info(f"Audio extracted successfully, duration: {duration}s")
@@ -79,8 +83,8 @@ async def transcribe_video(
         full_text = transcription_service.get_full_text(segments)
         logger.info(f"Transcription completed: {len(full_text)} characters")
         
-        # Step 3: Generate feedback
-        feedback = feedback_service.generate_feedback(full_text)
+        # Step 3: Generate feedback with required skills
+        feedback = feedback_service.generate_feedback(full_text, request.required_skills)
         logger.info("Feedback generated successfully")
 
         print(feedback)
