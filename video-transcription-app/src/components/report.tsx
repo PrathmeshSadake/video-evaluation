@@ -616,24 +616,24 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
               <View style={styles.tableCol}>
                 <Text style={{
                   ...styles.tableCell, 
-                  backgroundColor: (feedback.quality_score || 0) >= 0.8 
-                    ? '#DCFCE7' : (feedback.quality_score || 0) >= 0.6
-                      ? '#DBEAFE' : (feedback.quality_score || 0) >= 0.4
+                  backgroundColor: (feedback.quality_score || 0) >= 4 
+                    ? '#DCFCE7' : (feedback.quality_score || 0) >= 3
+                      ? '#DBEAFE' : (feedback.quality_score || 0) >= 2
                         ? '#FEF3C7' : '#FEE2E2',
-                  color: (feedback.quality_score || 0) >= 0.8 
-                    ? '#166534' : (feedback.quality_score || 0) >= 0.6
-                      ? '#1E40AF' : (feedback.quality_score || 0) >= 0.4
+                  color: (feedback.quality_score || 0) >= 4 
+                    ? '#166534' : (feedback.quality_score || 0) >= 3
+                      ? '#1E40AF' : (feedback.quality_score || 0) >= 2
                         ? '#92400E' : '#B91C1C',
                   padding: 2, 
                   borderRadius: 4, 
                   textAlign: 'center',
                   fontSize: 8
                 }}>
-                  {(feedback.quality_score || 0) >= 0.8 
+                  {(feedback.quality_score || 0) >= 4 
                     ? "Excellent" 
-                    : (feedback.quality_score || 0) >= 0.6
+                    : (feedback.quality_score || 0) >= 3
                       ? "Good"
-                      : (feedback.quality_score || 0) >= 0.4
+                      : (feedback.quality_score || 0) >= 2
                         ? "Fair"
                         : "Poor"}
                 </Text>
@@ -889,8 +889,51 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
         </View>
       </Page>
 
-      {/* Technical Skills Page */}
+
+      
+      {/* Interview Questions Page */}
       <Page size="A4" style={styles.page}>
+
+
+        {/* Interview Questions */}
+        {feedback.questions && feedback.questions.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Interview Questions Analysis</Text>
+            
+            {feedback.questions.map((q, index) => (
+              <View key={index} style={{marginBottom: 15, borderBottomWidth: index < feedback.questions.length - 1 ? 1 : 0, borderBottomColor: '#E5E7EB', paddingBottom: 10}}>
+                <Text style={{...styles.text, fontWeight: 'bold'}}>Question {index + 1}:</Text>
+                <Text style={{...styles.text, marginBottom: 5}}>{q.question}</Text>
+                
+                <Text style={{...styles.text, fontWeight: 'bold'}}>Answer:</Text>
+                <Text style={{...styles.text, marginBottom: 5, fontStyle: 'italic'}}>{q.answer}</Text>
+                
+                <View style={styles.scoreRow}>
+                  <Text style={styles.scoreLabel}>Rating:</Text>
+                  <View style={styles.scoreBar}>
+                    <View style={{
+                      ...styles.scoreBarFill, 
+                      width: `${(q.rating / 5) * 100}%`,
+                      backgroundColor: getRatingColor(q.rating)
+                    }} />
+                  </View>
+                  <Text style={styles.scoreValue}>{q.rating}/5</Text>
+                </View>
+                
+                <Text style={{...styles.text, fontWeight: 'bold', marginTop: 5}}>Feedback:</Text>
+                <Text style={styles.text}>{q.feedback}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+        
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `${pageNumber} / ${totalPages}`
+        )} fixed />
+      </Page>
+
+            {/* Technical Skills Page */}
+            <Page size="A4" style={styles.page}>
         {/* Technical Skills Assessment */}
         {feedback.technical_skills && (
           <View style={styles.section}>
@@ -989,47 +1032,6 @@ const PDFReport = ({ data }: { data: TranscriptionResponse }) => {
             
             <Text style={{...styles.text, marginTop: 15, fontWeight: 'bold'}}>Technical Verdict:</Text>
             <Text style={{...styles.text, fontStyle: 'italic', color: '#4338CA'}}>{feedback.technical_skills.verdict}</Text>
-          </View>
-        )}
-        
-        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
-          `${pageNumber} / ${totalPages}`
-        )} fixed />
-      </Page>
-      
-      {/* Communication Skills Page */}
-      <Page size="A4" style={styles.page}>
-
-
-        {/* Interview Questions */}
-        {feedback.questions && feedback.questions.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Interview Questions Analysis</Text>
-            
-            {feedback.questions.map((q, index) => (
-              <View key={index} style={{marginBottom: 15, borderBottomWidth: index < feedback.questions.length - 1 ? 1 : 0, borderBottomColor: '#E5E7EB', paddingBottom: 10}}>
-                <Text style={{...styles.text, fontWeight: 'bold'}}>Question {index + 1}:</Text>
-                <Text style={{...styles.text, marginBottom: 5}}>{q.question}</Text>
-                
-                <Text style={{...styles.text, fontWeight: 'bold'}}>Answer:</Text>
-                <Text style={{...styles.text, marginBottom: 5, fontStyle: 'italic'}}>{q.answer}</Text>
-                
-                <View style={styles.scoreRow}>
-                  <Text style={styles.scoreLabel}>Rating:</Text>
-                  <View style={styles.scoreBar}>
-                    <View style={{
-                      ...styles.scoreBarFill, 
-                      width: `${(q.rating / 5) * 100}%`,
-                      backgroundColor: getRatingColor(q.rating)
-                    }} />
-                  </View>
-                  <Text style={styles.scoreValue}>{q.rating}/5</Text>
-                </View>
-                
-                <Text style={{...styles.text, fontWeight: 'bold', marginTop: 5}}>Feedback:</Text>
-                <Text style={styles.text}>{q.feedback}</Text>
-              </View>
-            ))}
           </View>
         )}
         

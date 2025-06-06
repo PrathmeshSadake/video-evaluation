@@ -167,7 +167,7 @@ export default function Home() {
   };
 
   // PDF export is now handled by the PDFDownloadButton component
- 
+
   const handleAddSkill = () => {
     if (newSkill.trim() !== "") {
       setRequiredSkills([...requiredSkills, { name: newSkill.trim() }]);
@@ -230,9 +230,9 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           videoUrl,
-          requiredSkills: requiredSkills.map(skill => skill.name)
+          requiredSkills: requiredSkills.map((skill) => skill.name),
         }),
       });
 
@@ -381,12 +381,14 @@ export default function Home() {
               <Brain className="mr-3 text-purple-500" />
               Required Skills to Evaluate
             </h2>
-            
+
             <div className="space-y-6">
               <p className="text-slate-600">
-                Add specific skills you want to evaluate in this interview. The AI will assess if these skills are mentioned and provide ratings.
+                Add specific skills you want to evaluate in this interview. The
+                AI will assess if these skills are mentioned and provide
+                ratings.
               </p>
-              
+
               <div className="flex items-center space-x-3">
                 <input
                   type="text"
@@ -394,7 +396,7 @@ export default function Home() {
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Enter a skill (e.g., React, Python, AWS)"
                   className="flex-1 px-4 py-3 border border-slate-200 text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                  onKeyPress={(e) => e.key === "Enter" && handleAddSkill()}
                 />
                 <button
                   onClick={handleAddSkill}
@@ -403,18 +405,20 @@ export default function Home() {
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
-              
+
               {requiredSkills.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-sm font-medium text-slate-700 mb-3">Skills to evaluate:</h3>
+                  <h3 className="text-sm font-medium text-slate-700 mb-3">
+                    Skills to evaluate:
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {requiredSkills.map((skill, index) => (
-                      <div 
+                      <div
                         key={index}
                         className="bg-purple-50 text-purple-700 px-3 py-2 rounded-lg text-sm font-medium border border-purple-100 flex items-center"
                       >
                         {skill.name}
-                        <button 
+                        <button
                           onClick={() => handleRemoveSkill(index)}
                           className="ml-2 text-purple-400 hover:text-purple-700"
                         >
@@ -614,509 +618,463 @@ export default function Home() {
                 <Table className="mr-3 text-purple-500" />
                 Tabular Assessment
               </h3>
-              
+
               <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-slate-200 rounded-lg">
                   <thead>
                     <tr className="bg-slate-50">
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Category</th>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Score</th>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Rating</th>
-                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Comments</th>
+                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                        Category
+                      </th>
+                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                        Score
+                      </th>
+                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                        Rating
+                      </th>
+                      <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                        Comments
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {/* Technical Skills */}
                     <tr className="border-b">
-                      <td className="py-3 px-4 text-slate-800 font-medium">Technical Skills</td>
+                      <td className="py-3 px-4 text-slate-800 font-medium">
+                        Technical Skills
+                      </td>
                       <td className="py-3 px-4">
                         {transcriptionResult.feedback.technical_skills ? (
                           <div className="flex items-center">
                             <div className="w-12 bg-slate-200 rounded-full h-2.5">
-                              <div 
-                                className="bg-purple-600 h-2.5 rounded-full" 
-                                style={{ width: `${(((transcriptionResult.feedback.technical_skills.depth_in_core_topics || 0) + 
-                                  (transcriptionResult.feedback.technical_skills.breadth_of_tech_stack || 0)) / 10) * 100}%` }}
-                              ></div>
-                            </div>
-                            <span className="ml-2 text-sm font-medium text-slate-700">
-                              {Math.round(((transcriptionResult.feedback.technical_skills.depth_in_core_topics || 0) + 
-                                (transcriptionResult.feedback.technical_skills.breadth_of_tech_stack || 0)) / 2 * 20)}%
-                            </span>
-                          </div>
-                        ) : "N/A"}
-                      </td>
-                      <td className="py-3 px-4">
-                        {transcriptionResult.feedback.technical_skills?.verdict ? (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                            {transcriptionResult.feedback.technical_skills.breadth_of_tech_stack} / 5
-                          </span>
-                        ) : "N/A"}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.technical_skills?.strengths_summary?.substring(0, 250)}...
-                      </td>
-                    </tr>
-                    
-                    {/* Communication */}
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-slate-800 font-medium">Communication</td>
-                      <td className="py-3 px-4">
-                        {transcriptionResult.feedback.communication_skills ? (
-                          <div className="flex items-center">
-                            <div className="w-12 bg-slate-200 rounded-full h-2.5">
-                              <div 
-                                className="bg-blue-600 h-2.5 rounded-full" 
-                                style={{ width: `${((transcriptionResult.feedback.communication_skills.rating || 0) / 5) * 100}%` }}
-                              ></div>
-                            </div>
-                            <span className="ml-2 text-sm font-medium text-slate-700">
-                              {Math.round(((transcriptionResult.feedback.communication_skills.rating || 0) / 5) * 100)}%
-                            </span>
-                          </div>
-                        ) : "N/A"}
-                      </td>
-                      <td className="py-3 px-4">
-                        {transcriptionResult.feedback.communication_skills?.rating ? (
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            (transcriptionResult.feedback.communication_skills.rating || 0) >= 4 
-                              ? "bg-green-50 text-green-700 border border-green-200"
-                              : (transcriptionResult.feedback.communication_skills.rating || 0) >= 3
-                                ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}>
-                            {(transcriptionResult.feedback.communication_skills.rating || 0) >= 4 
-                              ? "Excellent" 
-                              : (transcriptionResult.feedback.communication_skills.rating || 0) >= 3
-                                ? "Good"
-                                : "Fair"}
-                          </span>
-                        ) : "N/A"}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.communication_skills?.summary?.substring(0, 250)}...
-                      </td>
-                    </tr>
-                    
-                    {/* Content Quality */}
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-slate-800 font-medium">Content Quality</td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center">
-                          <div className="w-12 bg-slate-200 rounded-full h-2.5">
-                            <div 
-                              className="bg-emerald-600 h-2.5 rounded-full" 
-                              style={{ width: `${(transcriptionResult.feedback.quality_score || 0) * 20}%` }}
-                            ></div>
-                          </div>
-                          <span className="ml-2 text-sm font-medium text-slate-700">
-                            {Math.round((transcriptionResult.feedback.quality_score || 0) * 20)}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          (transcriptionResult.feedback.quality_score || 0) >= 0.8 
-                            ? "bg-green-50 text-green-700 border border-green-200"
-                            : (transcriptionResult.feedback.quality_score || 0) >= 0.6
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : (transcriptionResult.feedback.quality_score || 0) >= 0.4
-                                ? "bg-amber-50 text-amber-700 border border-amber-200"
-                                : "bg-red-50 text-red-700 border border-red-200"
-                        }`}>
-                          {(transcriptionResult.feedback.quality_score || 0) >= 0.8 
-                            ? "Excellent" 
-                            : (transcriptionResult.feedback.quality_score || 0) >= 0.6
-                              ? "Good"
-                              : (transcriptionResult.feedback.quality_score || 0) >= 0.4
-                                ? "Fair"
-                                : "Poor"}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.content_analysis?.information_density || "Standard"} information density, 
-                        {transcriptionResult.feedback.content_analysis?.clarity || "Average"} clarity
-                      </td>
-                    </tr>
-                    
-                    {/* Overall Assessment */}
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-slate-800 font-medium">Overall Assessment</td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center">
-                          <div className="w-12 bg-slate-200 rounded-full h-2.5">
-                            <div 
-                              className="bg-indigo-600 h-2.5 rounded-full" 
-                              style={{ width: `${((transcriptionResult.feedback.confidence_level || 0) / 5) * 100}%` }}
-                            ></div>
-                          </div>
-                          <span className="ml-2 text-sm font-medium text-slate-700">
-                            {Math.round(((transcriptionResult.feedback.confidence_level || 0) / 5) * 100)}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          transcriptionResult.feedback.overall_sentiment === "positive" 
-                            ? "bg-green-50 text-green-700 border border-green-200"
-                            : transcriptionResult.feedback.overall_sentiment === "neutral"
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : "bg-amber-50 text-amber-700 border border-amber-200"
-                        }`}>
-                          {transcriptionResult.feedback.overall_sentiment || "N/A"}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-slate-600">
-                        {transcriptionResult.feedback.final_assessment?.substring(0, 250)}...
-                      </td>
-                    </tr>
-                    
-                    {/* Required Skills Coverage */}
-                    <tr>
-                      <td className="py-3 px-4 text-slate-800 font-medium">Required Skills Coverage</td>
-                      <td className="py-3 px-4">
-                        {transcriptionResult.feedback.technical_skills?.skills ? (
-                          <div className="flex items-center">
-                            <div className="w-12 bg-slate-200 rounded-full h-2.5">
-                              <div 
-                                className="bg-violet-600 h-2.5 rounded-full" 
-                                style={{ 
-                                  width: `${(transcriptionResult.feedback.technical_skills.skills.filter(
-                                    s => s.is_required && s.availability_status !== "Not Available"
-                                  ).length / Math.max(1, requiredSkills.length)) * 100}%` 
+                              <div
+                                className="bg-purple-600 h-2.5 rounded-full"
+                                style={{
+                                  width: `${
+                                    (((transcriptionResult.feedback
+                                      .technical_skills.depth_in_core_topics ||
+                                      0) +
+                                      (transcriptionResult.feedback
+                                        .technical_skills
+                                        .breadth_of_tech_stack || 0)) /
+                                      10) *
+                                    100
+                                  }%`,
                                 }}
                               ></div>
                             </div>
                             <span className="ml-2 text-sm font-medium text-slate-700">
-                              {Math.round((transcriptionResult.feedback.technical_skills.skills.filter(
-                                s => s.is_required && s.availability_status !== "Not Available"
-                              ).length / Math.max(1, requiredSkills.length)) * 100)}%
+                              {Math.round(
+                                (((transcriptionResult.feedback.technical_skills
+                                  .depth_in_core_topics || 0) +
+                                  (transcriptionResult.feedback.technical_skills
+                                    .breadth_of_tech_stack || 0)) /
+                                  2) *
+                                  20
+                              )}
+                              %
                             </span>
                           </div>
-                        ) : "N/A"}
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
                       <td className="py-3 px-4">
-                        {transcriptionResult.feedback.technical_skills?.skills ? (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-                            {transcriptionResult.feedback.technical_skills.skills.filter(
-                              s => s.is_required && s.availability_status !== "Not Available"
-                            ).length} / {requiredSkills.length}
+                        {transcriptionResult.feedback.technical_skills
+                          ?.verdict ? (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                            {
+                              transcriptionResult.feedback.technical_skills
+                                .breadth_of_tech_stack
+                            }{" "}
+                            / 5
                           </span>
-                        ) : "N/A"}
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
                       <td className="py-3 px-4 text-sm text-slate-600">
-                        {requiredSkills.length === 0 
-                          ? "No required skills specified" 
-                          : `${transcriptionResult.feedback.technical_skills?.skills.filter(
-                              s => s.is_required && s.availability_status !== "Not Available"
-                            ).length} out of ${requiredSkills.length} required skills covered`}
+                        {transcriptionResult.feedback.technical_skills?.strengths_summary?.substring(
+                          0,
+                          250
+                        )}
+                        ...
+                      </td>
+                    </tr>
+
+                    {/* Communication */}
+                    <tr className="border-b">
+                      <td className="py-3 px-4 text-slate-800 font-medium">
+                        Communication
+                      </td>
+                      <td className="py-3 px-4">
+                        {transcriptionResult.feedback.communication_skills ? (
+                          <div className="flex items-center">
+                            <div className="w-12 bg-slate-200 rounded-full h-2.5">
+                              <div
+                                className="bg-blue-600 h-2.5 rounded-full"
+                                style={{
+                                  width: `${
+                                    ((transcriptionResult.feedback
+                                      .communication_skills.rating || 0) /
+                                      5) *
+                                    100
+                                  }%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className="ml-2 text-sm font-medium text-slate-700">
+                              {Math.round(
+                                ((transcriptionResult.feedback
+                                  .communication_skills.rating || 0) /
+                                  5) *
+                                  100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        ) : (
+                          "N/A"
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        {transcriptionResult.feedback.communication_skills
+                          ?.rating ? (
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              (transcriptionResult.feedback.communication_skills
+                                .rating || 0) >= 4
+                                ? "bg-green-50 text-green-700 border border-green-200"
+                                : (transcriptionResult.feedback
+                                    .communication_skills.rating || 0) >= 3
+                                ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                            }`}
+                          >
+                            {(transcriptionResult.feedback.communication_skills
+                              .rating || 0) >= 4
+                              ? "Excellent"
+                              : (transcriptionResult.feedback
+                                  .communication_skills.rating || 0) >= 3
+                              ? "Good"
+                              : "Fair"}
+                          </span>
+                        ) : (
+                          "N/A"
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-slate-600">
+                        {transcriptionResult.feedback.communication_skills?.summary?.substring(
+                          0,
+                          250
+                        )}
+                        ...
+                      </td>
+                    </tr>
+
+                    {/* Content Quality */}
+                    <tr className="border-b">
+                      <td className="py-3 px-4 text-slate-800 font-medium">
+                        Content Quality
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center">
+                          <div className="w-12 bg-slate-200 rounded-full h-2.5">
+                            <div
+                              className="bg-emerald-600 h-2.5 rounded-full"
+                              style={{
+                                width: `${
+                                  (transcriptionResult.feedback.quality_score ||
+                                    0) * 20
+                                }%`,
+                              }}
+                            ></div>
+                          </div>
+                          <span className="ml-2 text-sm font-medium text-slate-700">
+                            {Math.round(
+                              (transcriptionResult.feedback.quality_score ||
+                                0) * 20
+                            )}
+                            %
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            (transcriptionResult.feedback.quality_score || 0) >=
+                            4
+                              ? "bg-green-50 text-green-700 border border-green-200"
+                              : (transcriptionResult.feedback.quality_score ||
+                                  0) >= 3
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : (transcriptionResult.feedback.quality_score ||
+                                  0) >= 2
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : "bg-red-50 text-red-700 border border-red-200"
+                          }`}
+                        >
+                          {(transcriptionResult.feedback.quality_score || 0) >=
+                          4
+                            ? "Excellent"
+                            : (transcriptionResult.feedback.quality_score ||
+                                0) >= 3
+                            ? "Good"
+                            : (transcriptionResult.feedback.quality_score ||
+                                0) >= 2
+                            ? "Fair"
+                            : "Poor"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-slate-600">
+                        {transcriptionResult.feedback.content_analysis
+                          ?.information_density || "Standard"}{" "}
+                        information density,
+                        {transcriptionResult.feedback.content_analysis
+                          ?.clarity || "Average"}{" "}
+                        clarity
+                      </td>
+                    </tr>
+
+                    {/* Overall Assessment */}
+                    <tr className="border-b">
+                      <td className="py-3 px-4 text-slate-800 font-medium">
+                        Overall Assessment
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center">
+                          <div className="w-12 bg-slate-200 rounded-full h-2.5">
+                            <div
+                              className="bg-indigo-600 h-2.5 rounded-full"
+                              style={{
+                                width: `${
+                                  ((transcriptionResult.feedback
+                                    .confidence_level || 0) /
+                                    5) *
+                                  100
+                                }%`,
+                              }}
+                            ></div>
+                          </div>
+                          <span className="ml-2 text-sm font-medium text-slate-700">
+                            {Math.round(
+                              ((transcriptionResult.feedback.confidence_level ||
+                                0) /
+                                5) *
+                                100
+                            )}
+                            %
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            transcriptionResult.feedback.overall_sentiment ===
+                            "positive"
+                              ? "bg-green-50 text-green-700 border border-green-200"
+                              : transcriptionResult.feedback
+                                  .overall_sentiment === "neutral"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : "bg-amber-50 text-amber-700 border border-amber-200"
+                          }`}
+                        >
+                          {transcriptionResult.feedback.overall_sentiment ||
+                            "N/A"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-slate-600">
+                        {transcriptionResult.feedback.final_assessment?.substring(
+                          0,
+                          250
+                        )}
+                        ...
+                      </td>
+                    </tr>
+
+                    {/* Required Skills Coverage */}
+                    <tr>
+                      <td className="py-3 px-4 text-slate-800 font-medium">
+                        Required Skills Coverage
+                      </td>
+                      <td className="py-3 px-4">
+                        {transcriptionResult.feedback.technical_skills
+                          ?.skills ? (
+                          <div className="flex items-center">
+                            <div className="w-12 bg-slate-200 rounded-full h-2.5">
+                              <div
+                                className="bg-violet-600 h-2.5 rounded-full"
+                                style={{
+                                  width: `${
+                                    (transcriptionResult.feedback.technical_skills.skills.filter(
+                                      (s) =>
+                                        s.is_required &&
+                                        s.availability_status !==
+                                          "Not Available"
+                                    ).length /
+                                      Math.max(1, requiredSkills.length)) *
+                                    100
+                                  }%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className="ml-2 text-sm font-medium text-slate-700">
+                              {Math.round(
+                                (transcriptionResult.feedback.technical_skills.skills.filter(
+                                  (s) =>
+                                    s.is_required &&
+                                    s.availability_status !== "Not Available"
+                                ).length /
+                                  Math.max(1, requiredSkills.length)) *
+                                  100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        ) : (
+                          "N/A"
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        {transcriptionResult.feedback.technical_skills
+                          ?.skills ? (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                            {
+                              transcriptionResult.feedback.technical_skills.skills.filter(
+                                (s) =>
+                                  s.is_required &&
+                                  s.availability_status !== "Not Available"
+                              ).length
+                            }{" "}
+                            / {requiredSkills.length}
+                          </span>
+                        ) : (
+                          "N/A"
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-slate-600">
+                        {requiredSkills.length === 0
+                          ? "No required skills specified"
+                          : `${
+                              transcriptionResult.feedback.technical_skills?.skills.filter(
+                                (s) =>
+                                  s.is_required &&
+                                  s.availability_status !== "Not Available"
+                              ).length
+                            } out of ${
+                              requiredSkills.length
+                            } required skills covered`}
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              
+
               {/* Skills Table */}
-              {transcriptionResult.feedback.technical_skills?.skills && 
-               transcriptionResult.feedback.technical_skills.skills.length > 0 && (
-                <div className="mt-10">
-                  <h4 className="text-xl font-semibold mb-6 text-slate-800">Skills Assessment Table</h4>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border border-slate-200 rounded-lg">
-                      <thead>
-                        <tr className="bg-slate-50">
-                          <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Skill</th>
-                          <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Level</th>
-                          <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Rating</th>
-                          <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Score</th>
-                          <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">Required</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {transcriptionResult.feedback.technical_skills.skills.map((skill, index) => (
-                          <tr key={index} className="border-b">
-                            <td className="py-3 px-4 text-slate-800 font-medium">{skill.skill_name}</td>
-                            <td className="py-3 px-4">
-                              {skill.availability_status === "Not Available" ? (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-slate-50 text-slate-600 border border-slate-200">
-                                  Not Mentioned
-                                </span>
-                              ) : (
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(skill.level)}`}>
-                                  {skill.level}
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {skill.availability_status === "Not Available" ? (
-                                <span>-</span>
-                              ) : (
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRatingColor(skill.rating_text)}`}>
-                                  {skill.rating_text}
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {skill.availability_status === "Not Available" ? (
-                                <span>-</span>
-                              ) : (
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <div
-                                      key={i}
-                                      className={`w-3 h-3 rounded-full mr-1 ${
-                                        i < skill.rating_score
-                                          ? "bg-purple-500"
-                                          : "bg-slate-200"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {skill.is_required ? (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                                  Yes
-                                </span>
-                              ) : (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-slate-50 text-slate-600 border border-slate-200">
-                                  No
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Final Assessment Card - Improved */}
-            {(transcriptionResult.feedback.final_assessment ||
-              transcriptionResult.feedback.confidence_level ||
-              transcriptionResult.feedback.culture_fit ||
-              transcriptionResult.feedback.learning_aptitude ||
-              transcriptionResult.feedback.interviewer_notes) && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border-l-4 border-indigo-500 report-section">
-                <h3 className="text-2xl font-semibold mb-6 flex items-center text-slate-800">
-                  <Clipboard className="mr-3 text-indigo-500" />
-                  Final Assessment
-                </h3>
-                {transcriptionResult.feedback.final_assessment && (
-                  <p className="text-slate-700 text-lg italic bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8">
-                    &quot;{transcriptionResult.feedback.final_assessment}&quot;
-                  </p>
-                )}
-
-                {(transcriptionResult.feedback.confidence_level ||
-                  transcriptionResult.feedback.culture_fit ||
-                  transcriptionResult.feedback.learning_aptitude) && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-200">
-                    {transcriptionResult.feedback.confidence_level !==
-                      undefined && (
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-6 rounded-xl border border-blue-100">
-                        <p className="text-sm font-medium text-blue-700 mb-4">
-                          Confidence Level
-                        </p>
-                        <div className="flex items-center justify-center space-x-2">
-                          {[...Array(5)].map((_, i) => (
-                            <div
-                              key={i}
-                              className={`w-6 h-6 rounded-lg ${
-                                i <
-                                (transcriptionResult.feedback
-                                  .confidence_level || 0)
-                                  ? "bg-blue-500 shadow-lg shadow-blue-200"
-                                  : "bg-slate-200"
-                              } transition-all`}
-                            />
-                          ))}
-                        </div>
-                        <p className="font-semibold mt-4 text-center text-blue-900">
-                          {transcriptionResult.feedback.confidence_level || 0}/5
-                        </p>
-                      </div>
-                    )}
-
-                    {transcriptionResult.feedback.culture_fit !== undefined && (
-                      <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-6 rounded-xl border border-emerald-100">
-                        <p className="text-sm font-medium text-emerald-700 mb-4">
-                          Culture Fit
-                        </p>
-                        <div className="flex items-center justify-center space-x-2">
-                          {[...Array(5)].map((_, i) => (
-                            <div
-                              key={i}
-                              className={`w-6 h-6 rounded-lg ${
-                                i <
-                                (transcriptionResult.feedback.culture_fit || 0)
-                                  ? "bg-emerald-500 shadow-lg shadow-emerald-200"
-                                  : "bg-slate-200"
-                              } transition-all`}
-                            />
-                          ))}
-                        </div>
-                        <p className="font-semibold mt-4 text-center text-emerald-900">
-                          {transcriptionResult.feedback.culture_fit || 0}/5
-                        </p>
-                      </div>
-                    )}
-
-                    {transcriptionResult.feedback.learning_aptitude !==
-                      undefined && (
-                      <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 p-6 rounded-xl border border-violet-100">
-                        <p className="text-sm font-medium text-violet-700 mb-4">
-                          Learning Aptitude
-                        </p>
-                        <div className="flex items-center justify-center space-x-2">
-                          {[...Array(5)].map((_, i) => (
-                            <div
-                              key={i}
-                              className={`w-6 h-6 rounded-lg ${
-                                i <
-                                (transcriptionResult.feedback
-                                  .learning_aptitude || 0)
-                                  ? "bg-violet-500 shadow-lg shadow-violet-200"
-                                  : "bg-slate-200"
-                              } transition-all`}
-                            />
-                          ))}
-                        </div>
-                        <p className="font-semibold mt-4 text-center text-violet-900">
-                          {transcriptionResult.feedback.learning_aptitude || 0}
-                          /5
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {transcriptionResult.feedback.interviewer_notes && (
-                  <div className="mt-8 pt-6 border-t border-slate-200">
-                    <h4 className="font-semibold text-slate-800 mb-4 text-lg">
-                      Interviewer Notes
+              {transcriptionResult.feedback.technical_skills?.skills &&
+                transcriptionResult.feedback.technical_skills.skills.length >
+                  0 && (
+                  <div className="mt-10">
+                    <h4 className="text-xl font-semibold mb-6 text-slate-800">
+                      Skills Assessment Table
                     </h4>
-                    <p className="text-slate-700 bg-slate-50 p-6 rounded-xl border border-slate-100 italic leading-relaxed">
-                      {transcriptionResult.feedback.interviewer_notes}
-                    </p>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white border border-slate-200 rounded-lg">
+                        <thead>
+                          <tr className="bg-slate-50">
+                            <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                              Skill
+                            </th>
+                            <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                              Level
+                            </th>
+                            <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                              Rating
+                            </th>
+                            <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                              Score
+                            </th>
+                            <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700 border-b">
+                              Required
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {transcriptionResult.feedback.technical_skills.skills.map(
+                            (skill, index) => (
+                              <tr key={index} className="border-b">
+                                <td className="py-3 px-4 text-slate-800 font-medium">
+                                  {skill.skill_name}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {skill.availability_status ===
+                                  "Not Available" ? (
+                                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-slate-50 text-slate-600 border border-slate-200">
+                                      Not Mentioned
+                                    </span>
+                                  ) : (
+                                    <span
+                                      className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(
+                                        skill.level
+                                      )}`}
+                                    >
+                                      {skill.level}
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {skill.availability_status ===
+                                  "Not Available" ? (
+                                    <span>-</span>
+                                  ) : (
+                                    <span
+                                      className={`px-2 py-1 text-xs font-medium rounded-full ${getRatingColor(
+                                        skill.rating_text
+                                      )}`}
+                                    >
+                                      {skill.rating_text}
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {skill.availability_status ===
+                                  "Not Available" ? (
+                                    <span>-</span>
+                                  ) : (
+                                    <div className="flex items-center">
+                                      {[...Array(5)].map((_, i) => (
+                                        <div
+                                          key={i}
+                                          className={`w-3 h-3 rounded-full mr-1 ${
+                                            i < skill.rating_score
+                                              ? "bg-purple-500"
+                                              : "bg-slate-200"
+                                          }`}
+                                        />
+                                      ))}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {skill.is_required ? (
+                                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                      Yes
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-slate-50 text-slate-600 border border-slate-200">
+                                      No
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* Communication Skills Analysis */}
-            {transcriptionResult?.feedback?.communication_skills && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-100 report-section">
-                <h3 className="text-2xl font-semibold mb-8 text-slate-800 flex items-center">
-                  <User className="mr-3 text-blue-500" />
-                  Communication Skills Analysis
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="col-span-1 md:col-span-2 space-y-6">
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
-                      <h4 className="font-semibold text-slate-800 mb-3 text-lg">
-                        Summary
-                      </h4>
-                      <p className="text-slate-700 leading-relaxed">
-                        {transcriptionResult.feedback.communication_skills
-                          .summary || "No summary available"}
-                      </p>
-                    </div>
-
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
-                      <h4 className="font-semibold text-slate-800 mb-3 text-lg">
-                        Impact
-                      </h4>
-                      <p className="text-slate-700 leading-relaxed">
-                        {transcriptionResult.feedback.communication_skills
-                          .impact || "No impact analysis available"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="col-span-1">
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
-                      <h4 className="font-semibold text-slate-800 mb-4 text-lg text-center">
-                        Communication Ratings
-                      </h4>
-                      <div className="h-64">
-                        {typeof window !== "undefined" && (
-                          <Bar
-                            data={{
-                              labels: [
-                                "Overall",
-                                "Language Fluency",
-                                "Technical Articulation",
-                              ],
-                              datasets: [
-                                {
-                                  label: "Score (out of 5)",
-                                  data: [
-                                    transcriptionResult.feedback
-                                      .communication_skills.rating || 0,
-                                    transcriptionResult.feedback
-                                      .communication_skills.language_fluency ||
-                                      0,
-                                    transcriptionResult.feedback
-                                      .communication_skills
-                                      .technical_articulation || 0,
-                                  ],
-                                  backgroundColor: [
-                                    "rgba(59, 130, 246, 0.6)",
-                                    "rgba(16, 185, 129, 0.6)",
-                                    "rgba(99, 102, 241, 0.6)",
-                                  ],
-                                  borderColor: [
-                                    "rgb(59, 130, 246)",
-                                    "rgb(16, 185, 129)",
-                                    "rgb(99, 102, 241)",
-                                  ],
-                                  borderWidth: 1,
-                                },
-                              ],
-                            }}
-                            options={{
-                              responsive: true,
-                              maintainAspectRatio: false,
-                              scales: {
-                                y: {
-                                  beginAtZero: true,
-                                  max: 5,
-                                  ticks: {
-                                    stepSize: 1,
-                                    color: "#64748b",
-                                  },
-                                  grid: {
-                                    color: "#e2e8f0",
-                                  },
-                                },
-                                x: {
-                                  ticks: {
-                                    color: "#64748b",
-                                  },
-                                  grid: {
-                                    display: false,
-                                  },
-                                },
-                              },
-                              plugins: {
-                                legend: {
-                                  display: false,
-                                },
-                              },
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
 
             {/* Interview Questions Analysis */}
             {transcriptionResult?.feedback?.questions &&
@@ -1200,20 +1158,23 @@ export default function Home() {
 
                 {/* Required Skills Evaluation - New Section */}
                 {transcriptionResult.feedback.technical_skills.skills &&
-                  transcriptionResult.feedback.technical_skills.skills.filter(skill => skill.is_required).length > 0 && (
+                  transcriptionResult.feedback.technical_skills.skills.filter(
+                    (skill) => skill.is_required
+                  ).length > 0 && (
                     <div className="mb-12">
                       <h4 className="text-xl font-semibold mb-6 text-slate-800 flex items-center">
-                        <span className="mr-2">🎯</span> Required Skills Evaluation
+                        <span className="mr-2">🎯</span> Required Skills
+                        Evaluation
                       </h4>
                       <div className="grid grid-cols-1 gap-6">
                         {transcriptionResult.feedback.technical_skills.skills
-                          .filter(skill => skill.is_required)
+                          .filter((skill) => skill.is_required)
                           .map((skill, index) => (
                             <div
                               key={index}
                               className={`bg-gradient-to-r ${
-                                skill.availability_status === "Not Available" 
-                                  ? "from-slate-50 to-slate-100" 
+                                skill.availability_status === "Not Available"
+                                  ? "from-slate-50 to-slate-100"
                                   : "from-purple-50 to-purple-100"
                               } rounded-2xl p-6 border ${
                                 skill.availability_status === "Not Available"
@@ -1225,16 +1186,25 @@ export default function Home() {
                                 <h5 className="text-lg font-bold text-slate-800">
                                   {skill.skill_name}
                                 </h5>
-                                {skill.availability_status === "Not Available" ? (
+                                {skill.availability_status ===
+                                "Not Available" ? (
                                   <span className="px-4 py-2 rounded-full text-sm font-semibold border text-slate-600 bg-slate-50 border-slate-200">
                                     Not Mentioned in Interview
                                   </span>
                                 ) : (
                                   <div className="flex items-center space-x-4">
-                                    <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getLevelColor(skill.level)}`}>
+                                    <span
+                                      className={`px-4 py-2 rounded-full text-sm font-semibold border ${getLevelColor(
+                                        skill.level
+                                      )}`}
+                                    >
                                       {skill.level}
                                     </span>
-                                    <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getRatingColor(skill.rating_text)}`}>
+                                    <span
+                                      className={`px-4 py-2 rounded-full text-sm font-semibold border ${getRatingColor(
+                                        skill.rating_text
+                                      )}`}
+                                    >
                                       {skill.rating_text}
                                     </span>
                                   </div>
@@ -1243,17 +1213,20 @@ export default function Home() {
 
                               {skill.availability_status === "Not Available" ? (
                                 <p className="text-slate-600">
-                                  This required skill was not mentioned or discussed in the interview.
+                                  This required skill was not mentioned or
+                                  discussed in the interview.
                                 </p>
                               ) : (
                                 <div className="space-y-4">
                                   <p className="text-slate-700 leading-relaxed">
                                     {skill.detailed_feedback}
                                   </p>
-                                  
+
                                   {skill.rating_score > 0 && (
                                     <div className="flex items-center mt-2">
-                                      <span className="text-sm font-medium text-slate-600 mr-3">Rating:</span>
+                                      <span className="text-sm font-medium text-slate-600 mr-3">
+                                        Rating:
+                                      </span>
                                       <div className="flex space-x-1">
                                         {[...Array(5)].map((_, i) => (
                                           <div
@@ -1281,13 +1254,15 @@ export default function Home() {
 
                 {/* Skills Overview */}
                 {transcriptionResult.feedback.technical_skills.skills &&
-                  transcriptionResult.feedback.technical_skills.skills.filter(skill => !skill.is_required).length > 0 && (
+                  transcriptionResult.feedback.technical_skills.skills.filter(
+                    (skill) => !skill.is_required
+                  ).length > 0 && (
                     <div className="space-y-8 mb-12">
                       <h4 className="text-xl font-semibold mb-6 text-slate-800 flex items-center">
                         <span className="mr-2">💻</span> Detected Skills
                       </h4>
                       {transcriptionResult.feedback.technical_skills.skills
-                        .filter(skill => !skill.is_required)
+                        .filter((skill) => !skill.is_required)
                         .map((skill, index) => (
                           <div
                             key={index}
@@ -1437,8 +1412,7 @@ export default function Home() {
                               </div>
                             </div>
                           </div>
-                        )
-                      )}
+                        ))}
                     </div>
                   )}
 
@@ -1564,6 +1538,117 @@ export default function Home() {
                     </p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Communication Skills Analysis */}
+            {transcriptionResult?.feedback?.communication_skills && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-100 report-section">
+                <h3 className="text-2xl font-semibold mb-8 text-slate-800 flex items-center">
+                  <User className="mr-3 text-blue-500" />
+                  Communication Skills Analysis
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="col-span-1 md:col-span-2 space-y-6">
+                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <h4 className="font-semibold text-slate-800 mb-3 text-lg">
+                        Summary
+                      </h4>
+                      <p className="text-slate-700 leading-relaxed">
+                        {transcriptionResult.feedback.communication_skills
+                          .summary || "No summary available"}
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <h4 className="font-semibold text-slate-800 mb-3 text-lg">
+                        Impact
+                      </h4>
+                      <p className="text-slate-700 leading-relaxed">
+                        {transcriptionResult.feedback.communication_skills
+                          .impact || "No impact analysis available"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="col-span-1">
+                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                      <h4 className="font-semibold text-slate-800 mb-4 text-lg text-center">
+                        Communication Ratings
+                      </h4>
+                      <div className="h-64">
+                        {typeof window !== "undefined" && (
+                          <Bar
+                            data={{
+                              labels: [
+                                "Overall",
+                                "Language Fluency",
+                                "Technical Articulation",
+                              ],
+                              datasets: [
+                                {
+                                  label: "Score (out of 5)",
+                                  data: [
+                                    transcriptionResult.feedback
+                                      .communication_skills.rating || 0,
+                                    transcriptionResult.feedback
+                                      .communication_skills.language_fluency ||
+                                      0,
+                                    transcriptionResult.feedback
+                                      .communication_skills
+                                      .technical_articulation || 0,
+                                  ],
+                                  backgroundColor: [
+                                    "rgba(59, 130, 246, 0.6)",
+                                    "rgba(16, 185, 129, 0.6)",
+                                    "rgba(99, 102, 241, 0.6)",
+                                  ],
+                                  borderColor: [
+                                    "rgb(59, 130, 246)",
+                                    "rgb(16, 185, 129)",
+                                    "rgb(99, 102, 241)",
+                                  ],
+                                  borderWidth: 1,
+                                },
+                              ],
+                            }}
+                            options={{
+                              responsive: true,
+                              maintainAspectRatio: false,
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                  max: 5,
+                                  ticks: {
+                                    stepSize: 1,
+                                    color: "#64748b",
+                                  },
+                                  grid: {
+                                    color: "#e2e8f0",
+                                  },
+                                },
+                                x: {
+                                  ticks: {
+                                    color: "#64748b",
+                                  },
+                                  grid: {
+                                    display: false,
+                                  },
+                                },
+                              },
+                              plugins: {
+                                legend: {
+                                  display: false,
+                                },
+                              },
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1719,6 +1804,118 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+            {/* Final Assessment Card - Improved */}
+            {(transcriptionResult.feedback.final_assessment ||
+              transcriptionResult.feedback.confidence_level ||
+              transcriptionResult.feedback.culture_fit ||
+              transcriptionResult.feedback.learning_aptitude ||
+              transcriptionResult.feedback.interviewer_notes) && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border-l-4 border-indigo-500 report-section">
+                <h3 className="text-2xl font-semibold mb-6 flex items-center text-slate-800">
+                  <Clipboard className="mr-3 text-indigo-500" />
+                  Final Assessment
+                </h3>
+                {transcriptionResult.feedback.final_assessment && (
+                  <p className="text-slate-700 text-lg italic bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8">
+                    &quot;{transcriptionResult.feedback.final_assessment}&quot;
+                  </p>
+                )}
+
+                {(transcriptionResult.feedback.confidence_level ||
+                  transcriptionResult.feedback.culture_fit ||
+                  transcriptionResult.feedback.learning_aptitude) && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-200">
+                    {transcriptionResult.feedback.confidence_level !==
+                      undefined && (
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-6 rounded-xl border border-blue-100">
+                        <p className="text-sm font-medium text-blue-700 mb-4">
+                          Confidence Level
+                        </p>
+                        <div className="flex items-center justify-center space-x-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-6 h-6 rounded-lg ${
+                                i <
+                                (transcriptionResult.feedback
+                                  .confidence_level || 0)
+                                  ? "bg-blue-500 shadow-lg shadow-blue-200"
+                                  : "bg-slate-200"
+                              } transition-all`}
+                            />
+                          ))}
+                        </div>
+                        <p className="font-semibold mt-4 text-center text-blue-900">
+                          {transcriptionResult.feedback.confidence_level || 0}/5
+                        </p>
+                      </div>
+                    )}
+
+                    {transcriptionResult.feedback.culture_fit !== undefined && (
+                      <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-6 rounded-xl border border-emerald-100">
+                        <p className="text-sm font-medium text-emerald-700 mb-4">
+                          Culture Fit
+                        </p>
+                        <div className="flex items-center justify-center space-x-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-6 h-6 rounded-lg ${
+                                i <
+                                (transcriptionResult.feedback.culture_fit || 0)
+                                  ? "bg-emerald-500 shadow-lg shadow-emerald-200"
+                                  : "bg-slate-200"
+                              } transition-all`}
+                            />
+                          ))}
+                        </div>
+                        <p className="font-semibold mt-4 text-center text-emerald-900">
+                          {transcriptionResult.feedback.culture_fit || 0}/5
+                        </p>
+                      </div>
+                    )}
+
+                    {transcriptionResult.feedback.learning_aptitude !==
+                      undefined && (
+                      <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 p-6 rounded-xl border border-violet-100">
+                        <p className="text-sm font-medium text-violet-700 mb-4">
+                          Learning Aptitude
+                        </p>
+                        <div className="flex items-center justify-center space-x-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-6 h-6 rounded-lg ${
+                                i <
+                                (transcriptionResult.feedback
+                                  .learning_aptitude || 0)
+                                  ? "bg-violet-500 shadow-lg shadow-violet-200"
+                                  : "bg-slate-200"
+                              } transition-all`}
+                            />
+                          ))}
+                        </div>
+                        <p className="font-semibold mt-4 text-center text-violet-900">
+                          {transcriptionResult.feedback.learning_aptitude || 0}
+                          /5
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {transcriptionResult.feedback.interviewer_notes && (
+                  <div className="mt-8 pt-6 border-t border-slate-200">
+                    <h4 className="font-semibold text-slate-800 mb-4 text-lg">
+                      Interviewer Notes
+                    </h4>
+                    <p className="text-slate-700 bg-slate-50 p-6 rounded-xl border border-slate-100 italic leading-relaxed">
+                      {transcriptionResult.feedback.interviewer_notes}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
